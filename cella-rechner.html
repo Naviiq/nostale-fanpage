@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nostale Fanpage – Cella-Rechner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Grundlayout */
+    body{margin:0;font-family:'Segoe UI','Trebuchet MS',system-ui,-apple-system,sans-serif;color:#fff;background:url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 24px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.5);flex-wrap:wrap}
+    header .logo img{max-height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
+    nav{flex:1;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+    nav a{text-decoration:none;color:#fff;padding:8px 14px;border-radius:12px;font-weight:600;transition:.25s ease}
+    nav a:hover{background:rgba(255,255,255,.15)}
+
+    /* Seite */
+    .page{width:min(1000px,92vw);margin:40px auto;display:flex;flex-direction:column;gap:20px}
+    h1{margin:0;text-shadow:0 0 12px rgba(255,215,0,.45)}
+
+    .card{background:rgba(0,0,0,.55);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:24px;display:flex;flex-direction:column;gap:16px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px;text-align:center}
+    th{background:rgba(255,255,255,.12);font-weight:700}
+    td{background:rgba(255,255,255,.06)}
+    .pos{display:flex;align-items:center;gap:10px;justify-content:flex-start}
+    .pos img{width:26px;height:26px;border-radius:6px;box-shadow:0 0 8px rgba(255,255,255,.2)}
+
+    input{width:120px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;text-align:right}
+    input[readonly]{opacity:.85;cursor:not-allowed}
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type=number]{-moz-appearance:textfield}
+
+    .muted{opacity:.85}
+    .result{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:12px}
+    .box{flex:1;min-width:240px;padding:14px;border-radius:14px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2)}
+    .reset{align-self:flex-end;padding:10px 20px;background:#c0392b;border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer}
+    .reset:hover{background:#e74c3c}
+
+    /* Einheitlicher Footer (ohne Gameforge) */
+    .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.18);margin-top:auto}
+    .footer p{margin:0 0 10px;color:#fff;font-weight:500}
+    .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
+    .footer .socials img{width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5));transition:transform .15s ease}
+    .footer .socials img:hover{transform:translateY(-1px) scale(1.05)}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo" aria-label="Zur Startseite">
+      <img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo">
+    </a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <section class="page">
+    <h1>Cella-Rechner</h1>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Stückzahl</th>
+            <th>Preis</th>
+            <th>Gesamt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="pos"><img src="https://i.postimg.cc/L8R62NbG/gillion.png" alt=""> Gillion</td>
+            <td><input id="gillionQty" type="number" min="0" value="0"></td>
+            <td><input id="gillionPrice" type="number" min="0" value="0"> Gold</td>
+            <td id="gillionTotal">0 Gold</td>
+          </tr>
+          <tr>
+            <td class="pos"><img src="https://i.postimg.cc/J4r28XQP/refiner.png" alt=""> Veredler</td>
+            <td><input id="refinerQty" type="number" min="0" value="0"></td>
+            <td><input id="refinerPrice" type="number" value="500" readonly> Gold<br><span class="muted"></span></td>
+            <td id="refinerTotal">0 Gold</td>
+          </tr>
+          <tr>
+            <td class="pos"><img src="https://i.postimg.cc/ZnB0vn8g/calc.png" alt=""> Cella (Verkaufspreis)</td>
+            <td class="muted">—</td>
+            <td><input id="cellaPrice" type="number" min="0" value="0"> Gold</td>
+            <td class="muted">—</td>
+          </tr>
+          <tr>
+            <td class="pos"><img src="https://i.postimg.cc/PJ2KJ6MK/ocella.png" alt=""> Ø-Cella</td>
+            <td id="cellaQty">0</td>
+            <td class="muted">= Gillion × 7,5</td>
+            <td id="cellaTotal">0 Gold</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="result">
+        <div class="box">Ausgaben (Gillion + Veredler): <strong id="expenses">0 Gold</strong></div>
+        <div class="box">Gewinn (Ø-Cella × Cella-Preis − Ausgaben): <strong id="profit">0 Gold</strong></div>
+      </div>
+
+      <button class="reset" id="resetBtn">Zurücksetzen</button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
+    <div class="socials">
+      <a href="https://discord.com" target="_blank" aria-label="Discord">
+        <img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord">
+      </a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram">
+        <img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram">
+      </a>
+      <a href="https://x.com" target="_blank" aria-label="X">
+        <img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X">
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    const gillionQty=document.getElementById("gillionQty");
+    const gillionPrice=document.getElementById("gillionPrice");
+    const refinerQty=document.getElementById("refinerQty");
+    const refinerPrice=document.getElementById("refinerPrice");
+    const cellaPrice=document.getElementById("cellaPrice");
+
+    const gillionTotal=document.getElementById("gillionTotal");
+    const refinerTotal=document.getElementById("refinerTotal");
+    const cellaQty=document.getElementById("cellaQty");
+    const cellaTotal=document.getElementById("cellaTotal");
+    const expenses=document.getElementById("expenses");
+    const profit=document.getElementById("profit");
+    const resetBtn=document.getElementById("resetBtn");
+
+    function fmt(n){return (Number(n)||0).toLocaleString("de-DE")+" Gold";}
+
+    function calc(){
+      const gQ=+gillionQty.value||0;
+      const gP=+gillionPrice.value||0;
+      const rQ=+refinerQty.value||0;
+      const rP=500; refinerPrice.value=rP; // Fixpreis
+      const cP=+cellaPrice.value||0;
+
+      const gTot=gQ*gP;
+      const rTot=rQ*rP;
+      const ocQ=gQ*7.5;
+      const ocTot=ocQ*cP;
+      const exp=gTot+rTot;
+      const prof=ocTot-exp;
+
+      gillionTotal.textContent=fmt(gTot);
+      refinerTotal.textContent=fmt(rTot);
+      cellaQty.textContent=ocQ.toFixed(1);
+      cellaTotal.textContent=fmt(ocTot);
+      expenses.textContent=fmt(exp);
+      profit.textContent=fmt(prof);
+      profit.style.color=prof>=0?"#2ecc71":"#e74c3c";
+    }
+
+    [gillionQty,gillionPrice,refinerQty,cellaPrice].forEach(el=>el.addEventListener("input",calc));
+    resetBtn.addEventListener("click",()=>{[gillionQty,gillionPrice,refinerQty,cellaPrice].forEach(el=>el.value=0);calc();});
+    calc();
+  </script>
+</body>
+</html>

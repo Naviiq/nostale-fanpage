@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nostale Fanpage – Damage-Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{--glass:rgba(0,0,0,.55);--line:rgba(255,255,255,.18)}
+    *{box-sizing:border-box}
+    /* Grundlayout */
+    body{margin:0;font-family:'Segoe UI','Trebuchet MS',system-ui,-apple-system,sans-serif;color:#fff;background:url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 24px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.5);flex-wrap:wrap}
+    header .logo img{max-height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
+    nav{flex:1;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+    nav a{text-decoration:none;color:#fff;padding:8px 14px;border-radius:12px;font-weight:600;transition:.25s ease}
+    nav a:hover{background:rgba(255,255,255,.15)}
+
+    .page{width:min(1100px,94vw);margin:40px auto;display:flex;flex-direction:column;gap:18px}
+    h1{margin:0;text-shadow:0 0 12px rgba(255,215,0,.45)}
+
+    /* Slider Card */
+    .card{position:relative;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:14px;overflow:hidden}
+    .stage{position:relative;width:100%;height:min(62vh,620px);border-radius:14px;overflow:hidden}
+    .track{display:flex;height:100%;transition:transform .45s ease}
+    .slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative}
+    .slide img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,0,0,.55))}
+    .caption{position:absolute;left:16px;bottom:16px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border:1px solid var(--line);padding:8px 12px;border-radius:10px;font-weight:700}
+
+    /* Arrows */
+    .arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+    .arrow:hover{background:rgba(255,255,255,.12)}
+    .arrow:active{transform:translateY(-50%) scale(.98)}
+    .arrow svg{width:22px;height:22px;fill:#fff}
+    .prev{left:12px}
+    .next{right:12px}
+
+    /* Dots */
+    .dots{display:flex;gap:10px;justify-content:center;align-items:center;padding:12px 6px;margin-top:4px}
+    .dot{width:12px;height:12px;border-radius:999px;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.6);cursor:pointer;transition:transform .15s ease, background .2s}
+    .dot.active{background:#7dd3fc;border-color:#c8f1ff;transform:scale(1.15)}
+
+    /* Footer (ohne Gameforge) */
+    .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.18);margin-top:auto}
+    .footer p{margin:0 0 10px;color:#fff;font-weight:500}
+    .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
+    .footer .socials img{width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5));transition:transform .15s ease}
+    .footer .socials img:hover{transform:translateY(-1px) scale(1.05)}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo" aria-label="Zur Startseite">
+      <img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo">
+    </a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <section class="page">
+    <h1>Damage-Info (PvE)</h1>
+
+    <div class="card">
+      <div class="stage" id="stage">
+        <div class="track" id="track" style="transform:translateX(0%)">
+          <!-- Slides -->
+          <div class="slide" data-title="Schwerkämpfer – PvE">
+            <img src="https://i.postimg.cc/437cmf1M/Sword.png" alt="Schwerkämpfer PvE">
+            <div class="caption">Schwerkämpfer – PvE</div>
+          </div>
+          <div class="slide" data-title="Bogenschütze – PvE">
+            <img src="https://i.postimg.cc/FRhhwG1Z/bow.png" alt="Bogenschütze PvE">
+            <div class="caption">Bogenschütze – PvE</div>
+          </div>
+          <div class="slide" data-title="Magier – PvE">
+            <img src="https://i.postimg.cc/T24XcTjQ/Mage.png" alt="Magier PvE">
+            <div class="caption">Magier – PvE</div>
+          </div>
+          <div class="slide" data-title="Kampfkünstler – PvE">
+            <img src="https://i.postimg.cc/QCrYfnt8/Kak.png" alt="Kampfkünstler PvE">
+            <div class="caption">Kampfkünstler – PvE</div>
+          </div>
+        </div>
+
+        <!-- Arrows -->
+        <button class="arrow prev" id="prev" aria-label="Vorheriges Bild">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="arrow next" id="next" aria-label="Nächstes Bild">
+          <svg viewBox="0 0 24 24"><path d="m8.59 16.59 1.41 1.41L16 12 10 6 8.59 7.41 13.17 12z"/></svg>
+        </button>
+      </div>
+
+      <!-- Dots -->
+      <div class="dots" id="dots"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
+    <div class="socials">
+      <a href="https://discord.com" target="_blank" aria-label="Discord"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
+      <a href="https://x.com" target="_blank" aria-label="X"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></a>
+    </div>
+  </footer>
+
+  <script>
+    // --- Simple slider logic ---
+    const track = document.getElementById('track');
+    const slides = Array.from(track.children);
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const dotsWrap = document.getElementById('dots');
+    let index = 0;
+
+    // Build dots
+    slides.forEach((_,i)=>{
+      const d=document.createElement('button');
+      d.className='dot'+(i===0?' active':'');
+      d.setAttribute('aria-label','Gehe zu Slide '+(i+1));
+      d.addEventListener('click',()=>go(i));
+      dotsWrap.appendChild(d);
+    });
+
+    function update(){
+      track.style.transform = `translateX(-${index*100}%)`;
+      // dots active
+      dotsWrap.querySelectorAll('.dot').forEach((dot,i)=>dot.classList.toggle('active',i===index));
+    }
+
+    function go(i){
+      index = (i+slides.length)%slides.length;
+      update();
+    }
+    function next(){ go(index+1); }
+    function prev(){ go(index-1); }
+
+    nextBtn.addEventListener('click',next);
+    prevBtn.addEventListener('click',prev);
+
+    // Keyboard
+    window.addEventListener('keydown',(e)=>{
+      if(e.key==='ArrowRight') next();
+      if(e.key==='ArrowLeft') prev();
+    });
+
+    // Touch swipe
+    let startX=null;
+    const stage=document.getElementById('stage');
+    stage.addEventListener('touchstart',e=>{ startX = e.touches[0].clientX; },{passive:true});
+    stage.addEventListener('touchmove',e=>{}, {passive:true});
+    stage.addEventListener('touchend',e=>{
+      if(startX==null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      if(Math.abs(dx)>50){ dx<0 ? next() : prev(); }
+      startX=null;
+    });
+
+    // (Optional) Auto-slide – auskommentiert lassen, wenn du's manuell willst
+    // let auto = setInterval(next, 6000);
+    // stage.addEventListener('mouseenter',()=>clearInterval(auto));
+    // stage.addEventListener('mouseleave',()=>auto=setInterval(next,6000));
+  </script>
+</body>
+</html>

@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nostale Fanpage – Raid-Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --glass:rgba(0,0,0,.55);
+      --glass2:rgba(255,255,255,.08);
+      --line:rgba(255,255,255,.18);
+      --accent:#7dd3fc;
+      --fire:#ff5757;
+      --shadow:#b06cff;
+      --water:#4db8ff;
+      --light:#ffe766;
+      --none:#bfc5cf;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;color:#fff;
+      font-family:'Segoe UI','Trebuchet MS',system-ui,-apple-system,sans-serif;
+      background:url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;
+      min-height:100vh;display:flex;flex-direction:column;
+    }
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 24px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.5);flex-wrap:wrap}
+    header .logo img{max-height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
+    nav{flex:1;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+    nav a{text-decoration:none;color:#fff;padding:8px 14px;border-radius:12px;font-weight:600;transition:.25s ease}
+    nav a:hover{background:rgba(255,255,255,.15)}
+
+    .wrap{width:min(1200px,95vw);margin:34px auto;display:grid;grid-template-columns:280px 1fr;gap:16px}
+    @media (max-width:980px){.wrap{grid-template-columns:1fr}}
+
+    /* Sidebar */
+    .sidebar{background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(8px);border-radius:16px;overflow:hidden;height:min(75vh,780px);display:flex;flex-direction:column}
+    .side-head{padding:12px 12px 8px;border-bottom:1px solid var(--line)}
+    .search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff}
+    .raid-list{overflow:auto;padding:8px 6px 12px;display:flex;flex-direction:column;gap:6px}
+    .raid-item{display:flex;align-items:center;gap:10px;border-radius:10px;padding:8px 10px;border:1px solid transparent;cursor:pointer}
+    .raid-item img{width:28px;height:28px;border-radius:6px;object-fit:cover}
+    .raid-item:hover{background:rgba(255,255,255,.08)}
+    .raid-item.active{background:rgba(125,211,252,.18);border-color:rgba(125,211,252,.4)}
+
+    /* Content */
+    .content{background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(8px);border-radius:16px;padding:16px}
+    .title{display:flex;align-items:center;gap:12px;margin:0 0 6px}
+    .title img{width:36px;height:36px;border-radius:8px;object-fit:cover}
+    .subtitle{opacity:.9;margin:0 0 10px;display:none} /* abgeschaltet (Punkt 5) */
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+    .tab-btn{
+      padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.1);color:#fff;font-weight:600;cursor:pointer
+    }
+    .tab-btn.active{background:rgba(125,211,252,.2);border-color:rgba(125,211,252,.5)}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+
+    /* Übersicht – Info-Kacheln */
+    .box{background:var(--glass2);border:1px solid var(--line);border-radius:12px;padding:14px}
+    .info-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    @media (max-width:900px){.info-grid{grid-template-columns:1fr}}
+    .meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:6px}
+    .meta{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);padding:12px;border-radius:12px;display:flex;align-items:center;gap:10px}
+    .meta img{width:22px;height:22px;border-radius:50%}
+    .meta .k{opacity:.9;font-weight:600}
+    .meta .v{margin-left:auto;font-weight:700}
+    .elements{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);font-weight:800}
+    .chip img{width:18px;height:18px}
+    .chip.fire{color:var(--fire)}
+    .chip.shadow{color:var(--shadow)}
+    .chip.water{color:var(--water)}
+    .chip.light{color:var(--light)}
+    .chip.none{color:var(--none)}
+
+    .start-name{margin:8px 0 0;opacity:.9;font-weight:600}
+
+    /* Raidbox – Text mit Box-Wechsler */
+    .box-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+    .box-id{display:flex;align-items:center;gap:10px}
+    .box-id img{height:36px;border-radius:8px}
+    .bx-nav{display:flex;align-items:center;gap:8px}
+    .bx-btn{width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;font-weight:800;cursor:pointer}
+    .bx-btn:disabled{opacity:.4;cursor:not-allowed}
+    .box-items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+    .box-items li{display:flex;align-items:flex-start;gap:10px}
+    .box-items img{width:22px;height:22px;border-radius:4px;margin-top:2px}
+
+    /* Slider (Karten) */
+    .stage{position:relative;width:100%;height:min(60vh,560px);border-radius:14px;overflow:hidden;background:rgba(0,0,0,.35)}
+    .track{display:flex;height:100%;transition:transform .45s ease}
+    .slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+    .slide img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(0,0,0,.55))}
+    .ph{display:flex;align-items:center;justify-content:center;color:#cfe9ff;opacity:.8;font-weight:700;font-size:1.1rem}
+
+    .arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+    .arrow:hover{background:rgba(255,255,255,.12)}
+    .arrow svg{width:22px;height:22px;fill:#fff}
+    .prev{left:12px}
+    .next{right:12px}
+    .dots{display:flex;gap:10px;justify-content:center;align-items:center;padding:12px 6px;margin-top:6px}
+    .dot{width:12px;height:12px;border-radius:999px;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.6);cursor:pointer;transition:transform .15s ease, background .2s}
+    .dot.active{background:#7dd3fc;border-color:#c8f1ff;transform:scale(1.15)}
+
+    /* Footer */
+    .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid var(--line);margin-top:auto}
+    .footer p{margin:0 0 10px;color:#fff;font-weight:500}
+    .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
+    .footer .socials img{width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5));transition:transform .15s ease}
+    .footer .socials img:hover{transform:translateY(-1px) scale(1.05)}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo" aria-label="Zur Startseite">
+      <img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo">
+    </a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="side-head">
+        <input id="raidSearch" class="search" placeholder="Raid suchen …">
+      </div>
+      <div id="raidList" class="raid-list" role="listbox" aria-label="Raids"></div>
+    </aside>
+
+    <!-- Content -->
+    <section class="content">
+      <h2 class="title"><img id="raidIcon" alt=""><span id="raidName">Raid auswählen</span></h2>
+      <p class="subtitle" id="raidShort"></p>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="overview">Übersicht</button>
+        <button class="tab-btn" data-tab="box">Raidbox</button>
+        <button class="tab-btn" data-tab="maps">Karten</button>
+      </div>
+
+      <!-- Übersicht -->
+      <div class="tab-pane active" id="overview">
+        <div class="info-grid">
+          <div class="box">
+            <h3 style="margin:0 0 8px">Infos</h3>
+            <div class="meta-grid" id="metaGrid"></div>
+            <div class="elements" id="elements"></div>
+            <p id="desc" style="margin:12px 0 0; white-space:pre-line"></p>
+          </div>
+          <div class="box">
+            <h3 style="margin:0 0 8px">Startkarte</h3>
+            <img id="startImg" src="" alt="Startkarte" style="width:100%;border-radius:12px">
+            <div class="start-name" id="startName"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Raidbox (Text + Logos, mit Wechsel) -->
+      <div class="tab-pane" id="box">
+        <div class="box">
+          <div class="box-head">
+            <div class="box-id">
+              <img id="boxLogo" src="" alt="Box-Logo">
+              <h3 id="boxTitle" style="margin:0">Raidbox</h3>
+            </div>
+            <div class="bx-nav">
+              <button class="bx-btn" id="boxPrev" title="Vorherige Box">‹</button>
+              <button class="bx-btn" id="boxNext" title="Nächste Box">›</button>
+            </div>
+          </div>
+          <ul class="box-items" id="boxItems">
+            <!-- gefüllt über JS -->
+          </ul>
+          <p id="boxEmpty" style="opacity:.9;margin:8px 0 0;display:none">Inhalte folgen …</p>
+        </div>
+      </div>
+
+      <!-- Karten -->
+      <div class="tab-pane" id="maps">
+        <div class="box">
+          <div class="stage" id="stage">
+            <div class="track" id="track"></div>
+            <button class="arrow prev" id="prev" aria-label="Vorherige Karte">
+              <svg viewBox="0 0 24 24"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <button class="arrow next" id="next" aria-label="Nächste Karte">
+              <svg viewBox="0 0 24 24"><path d="m8.59 16.59 1.41 1.41L16 12 10 6 8.59 7.41 13.17 12z"/></svg>
+            </button>
+          </div>
+          <div class="dots" id="dots"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
+    <div class="socials">
+      <a href="https://discord.com" target="_blank" aria-label="Discord"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
+      <a href="https://x.com" target="_blank" aria-label="X"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></a>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Icons (einmalig) =====
+    const RUF_ICON = "https://i.postimg.cc/6qNJ7x7w/RufFame.png";
+    const ICONS = {
+      level:"https://i.postimg.cc/HnLcw39j/Level.png",
+      users:"https://i.postimg.cc/PJFL2ZSy/Spieler.png",
+      fame:RUF_ICON
+    };
+    const ELEMENT_ICONS = {
+      "feuer":"https://i.postimg.cc/MpCcGTX9/FeuerRes.png",
+      "schatten":"https://i.postimg.cc/KYt132Mx/Schatten-Res.png",
+      "wasser":"https://i.postimg.cc/Qd99s5NB/Wasser-Res.png",
+      "licht":"https://i.postimg.cc/gJdnvTVR/LichtRes.png",
+      "kein element":"https://i.postimg.cc/j5XCv4c1/NonRes.png"
+    };
+
+    // ===== Helpers =====
+    function makeSlug(s){return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');}
+    function chip(el){
+      const k=el.toLowerCase();
+      const cls = k.includes("feuer")?"fire":k.includes("schatten")?"shadow":k.includes("wasser")?"water":k.includes("licht")?"light":"none";
+      const icon = ELEMENT_ICONS[k] || ELEMENT_ICONS["kein element"];
+      const label = el.charAt(0).toUpperCase()+el.slice(1);
+      return `<span class="chip ${cls}"><img src="${icon}" alt="${label}">${label}</span>`;
+    }
+    function meta(label, value, icon){
+      const el=document.createElement('div'); el.className='meta';
+      el.innerHTML = `${icon?`<img src="${icon}" alt="">`:''}<span class="k">${label}</span><span class="v">${value}</span>`;
+      return el;
+    }
+
+    // ===== Daten-Strukturhinweis:
+    // box: { boxes: [ { logo: {src, title}, title: "…", items: [ {icon?:url, text:"…"}, ... ] } ] }
+    // elements: ["Feuer","Schatten", ...]
+    // startName: frei von dir gepflegt (kein Auto-Dateiname mehr)
+
+    const RAIDS = [
+  /* ===== Cuby Mutter – Wasser ===== */
+  { slug:"cuby", name:"Cuby Mutter",
+    icon:"https://i.postimg.cc/pr9w1VgD/CubyRaid.png",
+    start:"https://i.postimg.cc/bwz9Bstk/Jellyeingang.png", startName:"Jellyeingang",
+    level:"30–99", players:"5–15", fame:"900",
+    elements:["Wasser"],
+    desc:"Töte alle Cuby & betätige alle Hebel, damit sich der Boss-Raum öffnet.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/Fsbxpj7h/CubyBox.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox der Cuby Mutter",
+          items:[
+            { icon:"https://nosapki.com/images/icons/315.png", text:"Flammenhandschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/321.png", text:"Schuhe des Leuchtens ×1" },
+            { icon:"https://nosapki.com/images/icons/262.png", text:"Elvins Schwert ×1" },
+            { icon:"https://nosapki.com/images/icons/265.png", text:"Roter Bogen ×1" },
+            { icon:"https://nosapki.com/images/icons/268.png", text:"Legendärer Zauberstab ×1" },
+            { icon:"https://nosapki.com/images/icons/26.png",  text:"Goldener Säbel ×1" },
+            { icon:"https://nosapki.com/images/icons/40.png",  text:"Lederbogen ×1" },
+            { icon:"https://nosapki.com/images/icons/54.png",  text:"Manaherstellender Zauberstab ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png",text:"Schleckermaul ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/4xj84bHR/Cuby1.jpg","https://i.postimg.cc/rFPjgCJR/CubyBoss.jpg"]
+  },
+
+  /* ===== Ginseng – Licht ===== */
+  { slug:"ginseng", name:"Ginseng",
+    icon:"https://i.postimg.cc/mrL2pMVC/Ginseng-Raid.png",
+    start:"https://i.postimg.cc/mZnxRWwP/Ginsengfarmeingang.png", startName:"Ginsengfarmeingang",
+    level:"40–99", players:"5–15", fame:"1.200",
+    elements:["Licht"],
+    desc:"Töte alle Riesiges Mandra & betätige alle Hebel, damit sich der Boss-Raum öffnet. Im Boss-Raum müssen 7 Ginsengpflänzchen getötet werden, damit der Boss attackiert werden kann!",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/J4HfzY6P/Ginseng-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox des Ginsengs",
+          items:[
+            { icon:"https://nosapki.com/images/icons/291.png", text:"Winslet-Armbrust ×1" },
+            { icon:"https://nosapki.com/images/icons/289.png", text:"Scrammer ×1" },
+            { icon:"https://nosapki.com/images/icons/293.png", text:"Plaz-Zauberwaffe ×1" },
+            { icon:"https://nosapki.com/images/icons/297.png", text:"Tapferer Verteidiger ×1" },
+            { icon:"https://nosapki.com/images/icons/295.png", text:"Wächterblick ×1" },
+            { icon:"https://nosapki.com/images/icons/271.png", text:"Blaues Gewand des Weisen ×1" },
+            { icon:"https://nosapki.com/images/icons/310.png", text:"Antiker Kristallring ×1" },
+            { icon:"https://nosapki.com/images/icons/309.png", text:"Antike Kristallhalskette ×1" },
+            { icon:"https://nosapki.com/images/icons/311.png", text:"Antiker Kristallarmreif ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Gärtner ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/4xT3tj98/Ginseng1.jpg","https://i.postimg.cc/PqSfgxFc/Ginseng-Boss.jpg"]
+  },
+
+  /* ===== Dark Castra – Schatten ===== */
+  { slug:"dark-castra", name:"Dark Castra",
+    icon:"https://i.postimg.cc/rsRqcVR9/Castra-Raid.png",
+    start:"https://i.postimg.cc/28vB7m9v/Tor-d-Totenklage.png", startName:"Tor der Totenklage",
+    level:"50–99", players:"5–15", fame:"1.500",
+    elements:["Schatten"],
+    desc:"Töte alle Nachtschatten & betätige alle Hebel, damit sich der Boss-Raum öffnet.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/B6VJdLb6/Castra-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox des Dark Castra",
+          items:[
+            { icon:"https://nosapki.com/images/icons/312.png", text:"Antike Diamanthalskette ×1" },
+            { icon:"https://nosapki.com/images/icons/313.png", text:"Antiker Diamantring ×1" },
+            { icon:"https://nosapki.com/images/icons/314.png", text:"Antiker Diamantarmreif ×1" },
+            { icon:"https://nosapki.com/images/icons/263.png", text:"Glorreicher Säbel ×1" },
+            { icon:"https://nosapki.com/images/icons/266.png", text:"Bogen des Friedens ×1" },
+            { icon:"https://nosapki.com/images/icons/269.png", text:"Zauberrute des Geistes ×1" },
+            { icon:"https://nosapki.com/images/icons/227.png", text:"X-Maske ×1" },
+            { icon:"https://nosapki.com/images/icons/318.png", text:"Todeshandschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/320.png", text:"Wellenschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Ritualhelfer ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/bY4tndgp/Dark-Castra-Map.jpg","https://i.postimg.cc/BZjFt2xm/Dark-Castra-Boss.jpg"]
+  },
+
+  /* ===== Schwarze Riesenspinne – Schatten ===== */
+  { slug:"spinne", name:"Schwarze Riesenspinne",
+    icon:"https://i.postimg.cc/P5g3Ftdj/Spinne-Raid.png",
+    start:"https://i.postimg.cc/xdLswWdb/Spinnenh-hlenpfad.png", startName:"Spinnenhöhlenpfad",
+    level:"60–99", players:"5–15", fame:"1.800",
+    elements:["Schatten"],
+    desc:"Töte alle Schwarzer Spinnenkönig & betätige alle Hebel, damit sich der Boss-Raum öffnet.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/wvVwvLLq/Spinne-Raid-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox der schwarzen Riesenspinne",
+          items:[
+            { icon:"https://nosapki.com/images/icons/316.png", text:"Sturmhandschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/319.png", text:"Feuerschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/141.png", text:"Totschläger ×1" },
+            { icon:"https://nosapki.com/images/icons/148.png", text:"Belagerungsbogen ×1" },
+            { icon:"https://nosapki.com/images/icons/155.png", text:"Zauberstab der Seele ×1" },
+            { icon:"https://nosapki.com/images/icons/292.png", text:"Balenty-Armbrust ×1" },
+            { icon:"https://nosapki.com/images/icons/290.png", text:"Kris ×1" },
+            { icon:"https://nosapki.com/images/icons/294.png", text:"Zauberwaffe des Lichts ×1" },
+            { icon:"https://nosapki.com/images/icons/298.png", text:"Großartiger Verteidiger ×1" },
+            { icon:"https://nosapki.com/images/icons/296.png", text:"Lichttunika ×1" },
+            { icon:"https://nosapki.com/images/icons/272.png", text:"Testrobe ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Verängstigt ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/Wz1XJzwM/Spinne-Map.jpg","https://i.postimg.cc/9FNNZdSz/Spinne-Boss.jpg"]
+  },
+
+  /* ===== Riesenslade – Kein Element ===== */
+  { slug:"slade", name:"Riesenslade",
+    icon:"https://i.postimg.cc/pLrr1Hqq/Slade-Raid.png",
+    start:"https://i.postimg.cc/RVXqRFQW/Pfad-zum-Altar.png", startName:"Pfad zum Altar",
+    level:"70–99", players:"5–15", fame:"2.100",
+    elements:["Kein Element"],
+    desc:"Töte alle Slade-Priester & betätige alle Hebel, damit sich der Boss-Raum öffnet.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/y8GdMbGB/SladeBox.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox des Riesenslade",
+          items:[
+            { icon:"https://nosapki.com/images/icons/317.png", text:"Gotteshandschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/322.png", text:"Schattenschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/264.png", text:"Abgebrochenes Elementarschwert ×1" },
+            { icon:"https://nosapki.com/images/icons/267.png", text:"Majestätischer Bogen ×1" },
+            { icon:"https://nosapki.com/images/icons/270.png", text:"Majestätischer Zauberstab ×1" },
+            { icon:"https://nosapki.com/images/icons/299.png", text:"Flamberge ×1" },
+            { icon:"https://nosapki.com/images/icons/300.png", text:"Bogen der Macht ×1" },
+            { icon:"https://nosapki.com/images/icons/301.png", text:"Kais Zauberstab ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Urgestein ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/Hxwk7sks/SladeMap.jpg","https://i.postimg.cc/3wDRYZMG/Slade-Boss.jpg"]
+  },
+
+  /* ===== Huhnkönig – Kein Element ===== */
+  { slug:"chicken", name:"Huhnkönig",
+    icon:"https://i.postimg.cc/MGWZnSZk/Chicken-Raid.png",
+    start:"https://i.postimg.cc/QxTdPmYz/H-hnerfarmpfad.png", startName:"Hühnerfarmpfad",
+    level:"20–99", players:"5–15", fame:"100",
+    elements:["Kein Element"],
+    desc:"Töte alle Kampfhähne & betätige alle Hebel damit sich der Boss-Raum öffnet. Vermeide HP-Buffs; viele Hits/Effekte sind stark.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/Z5z5hN15/Chicken-Box.png", title:"Raidbox"},
+          title:"Raidbox des Huhnkönigs",
+          items:[
+            { icon:"https://nosapki.com/images/icons/907.png",  text:"Huhn-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2181.png", text:"Magisches Ei ×20" },
+            { icon:"https://nosapki.com/images/icons/2027.png", text:"Gebratenes Huhn ×50" },
+            { icon:"https://nosapki.com/images/icons/254.png",  text:"Hüpfendes Chicky ×1" },
+            { icon:"https://nosapki.com/images/icons/255.png",  text:"Tanzendes Chicky ×1" },
+            { icon:"https://nosapki.com/images/icons/256.png",  text:"Grimmiges Chicky ×1" },
+            { icon:"https://nosapki.com/images/icons/2315.png", text:"Huhnkönig-Fleisch ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Nugget ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/ZRnTLxyV/Chicken-Map.jpg","https://i.postimg.cc/DzBvsMmS/Chicken-Boss.jpg"]
+  },
+
+  /* ===== Namaju – Kein Element ===== */
+  { slug:"namaju", name:"Namaju",
+    icon:"https://i.postimg.cc/7PCzHgQ3/Namaju-Raid.png",
+    start:"https://i.postimg.cc/G3ZyHHZZ/Vollmonddach.png", startName:"Vollmonddach",
+    level:"50–99", players:"5–15", fame:"1.500",
+    elements:["Kein Element"],
+    desc:"Töte alle „Wütender Namaju“ & betätige alle Hebel. Empfohlen: 1–2 WK, 1–2 Holy, 11–13 Jajamaru (Job 20).",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/vHf69GyD/Namaju-Box.png", title:"Raidbox"},
+          title:"Raidbox des Namaju",
+          items:[
+            { icon:"https://nosapki.com/images/icons/334.png",  text:"Versiegelte Perle mit Sakura ×1" },
+            { icon:"https://nosapki.com/images/icons/227.png",  text:"X-Maske ×1" },
+            { icon:"https://nosapki.com/images/icons/182.png",  text:"Amulett des Angriff- und Verteidigungslevels ×1" },
+            { icon:"https://nosapki.com/images/icons/1078.png", text:"SpP-Trank ×1" },
+            { icon:"https://nosapki.com/images/icons/1092.png", text:"Timespacestück (Gruppe) ×3" },
+            { icon:"https://nosapki.com/images/icons/1095.png", text:"Timespacestück (Jagd) ×3" },
+            { icon:"https://nosapki.com/images/icons/1012.png", text:"Saat der Macht ×50" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Sakuras Held ×1" }
+          ]
+        }
+      ]
+    },
+    maps:[
+      "https://i.postimg.cc/DzyWtsXb/Namaju-Map.jpg",
+      "https://i.postimg.cc/xdxkYCvp/Namaju-Map2.jpg",
+      "https://i.postimg.cc/V6JJN84f/Namaju-Map3.jpg",
+      "https://i.postimg.cc/Y9ThGsy1/Namaju-Map4.jpg",
+      "https://i.postimg.cc/QC5VpJRv/Namaju-Map5.jpg",
+      "https://i.postimg.cc/SxG2TVJh/Namaju-Boss.jpg"
+    ]
+  },
+
+  /* ===== Ibrahim – Kein Element ===== */
+  { slug:"ibrahim", name:"Ibrahim",
+    icon:"https://i.postimg.cc/Y0y8WMBd/Ibrahim-Raid.png",
+    start:"https://i.postimg.cc/HsRBWY2x/Geheimpfad.png", startName:"Geheimpfad",
+    level:"80–99", players:"5–15", fame:"2.400",
+    elements:["Kein Element"],
+    desc:"Töte alle Kommandanten & betätige alle Hebel. Team: 5–6 WK, 2–3 Holy, 1–2 Krieger, 1 Bersi, 1 Crusi; Optionen: Gunner etc.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/Pf6Sczv1/Ibrahim-Box.png", title:"Ibrahims Tasche"},
+          title:"Ibrahims Tasche",
+          items:[
+            { icon:"https://nosapki.com/images/icons/1876.png", text:"Ibrahims Goldschlüssel ×1" },
+            { icon:"https://nosapki.com/images/icons/1872.png", text:"Goldmünze der Räuberbande ×1" },
+            { icon:"https://nosapki.com/images/icons/2349.png", text:"Glänzender himmelblauer Edelstein ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Meisterdieb ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/jjrcNMBY/Ibrahim-Map.jpg","https://i.postimg.cc/s29cJpRQ/Ibrahim-Map2.jpg","https://i.postimg.cc/W1ZShBW7/Ibrahim-Boss.jpg"]
+  },
+
+  /* ===== Kertos – Feuer (2 Boxen) ===== */
+  { slug:"kertos", name:"Kertos, der Dämonenhund",
+    icon:"https://i.postimg.cc/525LcbKD/Kertos-Raid.png",
+    start:"https://i.postimg.cc/GpcYdVZt/Kertos-H-hle.png", startName:"Kertos-Höhle",
+    level:"85–99", players:"5–15", fame:"2.700",
+    elements:["Feuer"],
+    desc:"Töte alle Schatten von Kertos & betätige alle Hebel. Team: Crusi, Gunner+Mechanikatz, Bersi (Tod), Rest Späher.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/4yhHWghL/Kertos-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox des Kertos",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2434.png", text:"Kertos' Stiefel ×1" },
+            { icon:"https://nosapki.com/images/icons/2441.png", text:"Verkohltes Maskenpergament ×1" },
+            { icon:"https://nosapki.com/images/icons/2442.png", text:"Grenigas' Accessoire-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/2444.png", text:"Grenigas' Zweitwaffen-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/1768.png", text:"Kertos' Muster ×1" },
+            { icon:"https://nosapki.com/images/icons/1787.png", text:"Tafel der antiken Zivilisation ×1" },
+            { icon:"https://nosapki.com/images/icons/2449.png", text:"Glutrotes Metallstück ×1" },
+            { icon:"https://nosapki.com/images/icons/2446.png", text:"Erdelement ×3" },
+            { icon:"https://nosapki.com/images/icons/2447.png", text:"Quellwasser ×1" },
+            { icon:"https://nosapki.com/images/icons/2454.png", text:"Zerbrochener Diamant ×7" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×2" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×5" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×10" },
+            { icon:"https://nosapki.com/images/icons/2457.png", text:"Linkes Stück des Raidsiegels des Grenigas ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Feuerwelpe ×1" }
+          ]
+        },
+        {
+          logo:{src:"https://i.postimg.cc/4yhHWghL/Kertos-Box.png", title:"Ausrüstungs-Raidbox"},
+          title:"Einfache Ausrüstungs-Raidbox des Kertos",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2409.png", text:"Kralle des Phönix ×1" },
+            { icon:"https://nosapki.com/images/icons/2412.png", text:"Reißzahn des Gluthundes ×1" },
+            { icon:"https://nosapki.com/images/icons/2415.png", text:"Hauch des Valaket ×1" },
+            { icon:"https://nosapki.com/images/icons/2411.png", text:"Armbrust des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/2414.png", text:"Dolch des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/2417.png", text:"Zauberwaffe des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/4034.png", text:"Wüstenräuber-Rüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/4067.png", text:"Goldmarke mit einem Pferd ×1" },
+            { icon:"https://nosapki.com/images/icons/4068.png", text:"Goldmarke mit zwei Pferden ×1" },
+            { icon:"https://nosapki.com/images/icons/4019.png", text:"Handschuh aus kaltem Stahl ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Feuerwelpe ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/zDLxsHCM/Kertos-Map.jpg","https://i.postimg.cc/F15dqBy9/Kertos-Boss.jpg"]
+  },
+
+  /* ===== Valakus – Feuer (2 Boxen) ===== */
+  { slug:"valakus", name:"Feuerkönig Valakus",
+    icon:"https://i.postimg.cc/cLQ9DKq3/Valakus-Raid.png",
+    start:"https://i.postimg.cc/X7BDCHQQ/Valakus-H-hle.png", startName:"Valakus-Höhle",
+    level:"85–99", players:"5–15", fame:"2.700",
+    elements:["Feuer"],
+    desc:"Zerstöre alle Eier & betätige alle Hebel.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/G3559wJ4/Valakus-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox des Valakus",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2432.png", text:"Valakus' Handschuh ×1" },
+            { icon:"https://nosapki.com/images/icons/2441.png", text:"Verkohltes Maskenpergament ×1" },
+            { icon:"https://nosapki.com/images/icons/2442.png", text:"Grenigas' Accessoire-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/2445.png", text:"Grenigas' Rüstungs-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/1785.png", text:"Katols Muster ×1" },
+            { icon:"https://nosapki.com/images/icons/1787.png", text:"Tafel der antiken Zivilisation ×1" },
+            { icon:"https://nosapki.com/images/icons/2449.png", text:"Glutrotes Metallstück ×1" },
+            { icon:"https://nosapki.com/images/icons/2446.png", text:"Erdelement ×3" },
+            { icon:"https://nosapki.com/images/icons/2447.png", text:"Quellwasser ×1" },
+            { icon:"https://nosapki.com/images/icons/2454.png", text:"Zerbrochener Diamant ×7" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×2" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×5" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×10" },
+            { icon:"https://nosapki.com/images/icons/2458.png", text:"Rechtes Stück des Raidsiegels des Grenigas ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Flammenwerfer ×1" }
+          ]
+        },
+        {
+          logo:{src:"https://i.postimg.cc/G3559wJ4/Valakus-Box.png", title:"Ausrüstungs-Raidbox"},
+          title:"Einfache Ausrüstungs-Raidbox des Valakus",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2418.png", text:"Panzerrüstung des Flammengiganten ×1" },
+            { icon:"https://nosapki.com/images/icons/2421.png", text:"Lederrüstung des Gluthundes ×1" },
+            { icon:"https://nosapki.com/images/icons/2424.png", text:"Gewand des feurigen Phönix ×1" },
+            { icon:"https://nosapki.com/images/icons/2420.png", text:"Rüstung des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/2423.png", text:"Lederrüstung des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/2426.png", text:"Gewand des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/4020.png", text:"Ladines Träne ×1" },
+            { icon:"https://nosapki.com/images/icons/4035.png", text:"Rüstung der Akamur ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Flammenwerfer ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/g0sMWf2k/Valakus-Map.jpg","https://i.postimg.cc/VkyZBqh1/Valakus-Boss.jpg"]
+  },
+
+  /* ===== Grenigas – Feuer (2 Boxen) ===== */
+  { slug:"grenigas", name:"Feuergott Grenigas",
+    icon:"https://i.postimg.cc/Fs0znG7K/Grenigas-Raid.png",
+    start:"https://i.postimg.cc/T2zh9B2S/Grenigasplatz.png", startName:"Grenigasplatz",
+    level:"85–99", players:"5–15", fame:"2.700",
+    elements:["Feuer"],
+    desc:"Töte alle Riesiges Mandra & betätige alle Hebel.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/2jbVnCYh/Grenigas-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox des Grenigas",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2430.png", text:"Schutzhelm des Flammengiganten ×1" },
+            { icon:"https://nosapki.com/images/icons/2441.png", text:"Verkohltes Maskenpergament ×1" },
+            { icon:"https://nosapki.com/images/icons/2442.png", text:"Grenigas' Accessoire-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/2443.png", text:"Grenigas' Waffen-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/1791.png", text:"Muster des Gral ×1" },
+            { icon:"https://nosapki.com/images/icons/1787.png", text:"Tafel der antiken Zivilisation ×1" },
+            { icon:"https://nosapki.com/images/icons/2449.png", text:"Glutrotes Metallstück ×1" },
+            { icon:"https://nosapki.com/images/icons/2446.png", text:"Erdelement ×3" },
+            { icon:"https://nosapki.com/images/icons/2447.png", text:"Quellwasser ×1" },
+            { icon:"https://nosapki.com/images/icons/2454.png", text:"Zerbrochener Diamant ×7" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×2" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×5" },
+            { icon:"https://nosapki.com/images/icons/2455.png", text:"Intakter Diamant ×10" },
+            { icon:"https://nosapki.com/images/icons/2458.png", text:"Rechtes Stück des Raidsiegels des Grenigas ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Phönix ×1" }
+          ]
+        },
+        {
+          logo:{src:"https://i.postimg.cc/2jbVnCYh/Grenigas-Box.png", title:"Ausrüstungs-Raidbox"},
+          title:"Ausrüstungs-Raidbox des Grenigas",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2464.png", text:"Magmaros' Feuerschwert ×1" },
+            { icon:"https://nosapki.com/images/icons/2466.png", text:"Schwinge des Phönix ×1" },
+            { icon:"https://nosapki.com/images/icons/2468.png", text:"Stab des Lavagespenstes ×1" },
+            { icon:"https://nosapki.com/images/icons/2465.png", text:"Schwert des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/2467.png", text:"Bogen des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/2469.png", text:"Zauberstab des vergessenen Helden +10 ×1" },
+            { icon:"https://nosapki.com/images/icons/4021.png", text:"Fenris' Klaue ×1" },
+            { icon:"https://nosapki.com/images/icons/4022.png", text:"Feuergolem-Handschuh ×1" },
+            { icon:"https://nosapki.com/images/icons/4036.png", text:"Rüstung des mysteriösen Reisenden ×1" },
+            { icon:"https://nosapki.com/images/icons/4037.png", text:"Felice-Uniform ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Phönix ×1" }
+          ]
+        }
+      ]
+    },
+    maps:[
+      "https://i.postimg.cc/pdcLn61s/Grenigas-Map.jpg",
+      "https://i.postimg.cc/T39wTwjM/Grenigas-Map2.jpg",
+      "https://i.postimg.cc/Dm3VXrTj/Grenigas-Boss.jpg"
+    ]
+  },
+
+  /* ===== Lord Draco – Feuer ===== */
+  { slug:"draco", name:"Lord Draco",
+    icon:"https://i.postimg.cc/VvDGYXN0/Draco-Raid.png",
+    start:"https://i.postimg.cc/MphsK6z5/Drachenh-hlenpfad.png", startName:"Drachenhöhlenpfad",
+    level:"75–99", players:"5–15", fame:"2.250",
+    elements:["Feuer"],
+    desc:"Hebel betätigen → Bossraum. Erst Draco hitten; beim Sprung verwundbarer. Team: 2 WK, 2 Bersi, Rest Wasser-SPs.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/qMvD1Dms/DracoBox.png", title:"Raidbox"},
+          title:"Raidbox des Lord Draco",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2544.png", text:"Gladiator-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2545.png", text:"Feuerkanonier-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2546.png", text:"Vulkano-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/4048.png", text:"Drachenfaust-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2550.png", text:"Drachenhaut ×3" },
+            { icon:"https://nosapki.com/images/icons/2549.png", text:"Drachenblut ×2" },
+            { icon:"https://nosapki.com/images/icons/2548.png", text:"Drachenherz ×1" },
+            { icon:"https://nosapki.com/images/icons/2601.png", text:"Kleiner Rubin der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2602.png", text:"Kleiner Obsidian der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2597.png", text:"Rubin der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2282.png", text:"Engelsfeder ×6" },
+            { icon:"https://nosapki.com/images/icons/1030.png", text:"Vollmondkristall ×3" },
+            { icon:"https://nosapki.com/images/icons/1249.png", text:"Erfahrungstrank ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Drachentöter ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/gktSQy5f/DracoMap.jpg","https://i.postimg.cc/d3qNP5JK/Draco-Boss.jpg"]
+  },
+
+  /* ===== Glacerus – Wasser ===== */
+  { slug:"glacerus", name:"Glacerus, der Eiskalte",
+    icon:"https://i.postimg.cc/4ydvQqJn/Glace-Raid.png",
+    start:"https://i.postimg.cc/yxbmQjdj/Wassergrotte.png", startName:"Wassergrotte",
+    level:"80–99", players:"5–15", fame:"2.400",
+    elements:["Wasser"],
+    desc:"Hebel betätigen. Schneesturm-Mechanik: In Felder stellen, sonst Freeze.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/kX2FV01p/GlaceBox.png", title:"Raidbox"},
+          title:"Raidbox des Glacerus",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2588.png", text:"Kampfmönch-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2589.png", text:"Späher-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2590.png", text:"Gezeitenbändiger-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/4093.png", text:"Spezialistenkarte von Mystische Künste ×1" },
+            { icon:"https://nosapki.com/images/icons/2548.png", text:"Drachenherz ×1" },
+            { icon:"https://nosapki.com/images/icons/2282.png", text:"Engelsfeder ×6" },
+            { icon:"https://nosapki.com/images/icons/1030.png", text:"Vollmondkristall ×3" },
+            { icon:"https://nosapki.com/images/icons/1249.png", text:"Erfahrungstrank ×1" },
+            { icon:"https://nosapki.com/images/icons/2349.png", text:"Glänzender himmelblauer Edelstein ×2" },
+            { icon:"https://nosapki.com/images/icons/2349.png", text:"Glänzender himmelblauer Edelstein ×3" },
+            { icon:"https://nosapki.com/images/icons/2603.png", text:"Kleiner Saphir der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2604.png", text:"Kleiner Topas der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2599.png", text:"Saphir der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Eiskalt ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/wv9Q73ZX/GlaceMap.jpg","https://i.postimg.cc/28gdn0g8/Glace-Boss.jpg"]
+  },
+
+  /* ===== Laurena – Schatten (2 Boxen) ===== */
+  { slug:"laurena", name:"Hexe Laurena (jeder eigenes Siegel!)",
+    icon:"https://i.postimg.cc/FHgf1G46/Laurena-Raid.png",
+    start:"https://i.postimg.cc/QxTdPmYz/H-hnerfarmpfad.png", startName:"Hühnerfarmpfad",
+    level:"70–99", players:"20–40", fame:"2.100",
+    elements:["Schatten"],
+    desc:"Pulver der Reinigung nötig. Caligor-Phasen: Hexe unverwundbar/Reflekt. Team groß, Rollen verteilt.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/gcQgmymR/Antike-Box.png", title:"Antike Hexentruhe"},
+          title:"Laurenas antike Hexentruhe",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2706.png", text:"Abtrünniger-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2707.png", text:"Racheengel-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2708.png", text:"Erzmagier-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2709.png", text:"Laurenas Partnerspezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2697.png", text:"Erzengel Luzifers Partnerspezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2701.png", text:"Laurenas Hexenhut ×1" },
+            { icon:"https://nosapki.com/images/icons/2282.png", text:"Engelsfeder ×5" },
+            { icon:"https://nosapki.com/images/icons/2285.png", text:"Glänzende blaue Seele ×1" },
+            { icon:"https://nosapki.com/images/icons/2354.png", text:"Gelber Edelstein ×1" },
+            { icon:"https://nosapki.com/images/icons/2353.png", text:"Grüner Edelstein ×1" },
+            { icon:"https://nosapki.com/images/icons/2601.png", text:"Kleiner Rubin der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2603.png", text:"Kleiner Saphir der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2602.png", text:"Kleiner Obsidian der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2604.png", text:"Kleiner Topas der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2597.png", text:"Rubin der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2599.png", text:"Saphir der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2598.png", text:"Obsidian der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2600.png", text:"Topas der Vollendung ×1" },
+            { icon:"https://nosapki.com/images/icons/2840.png", text:"Zwielichtessenz ×1" },
+            { icon:"https://nosapki.com/images/icons/2829.png", text:"Laurenas Halskette ×1" },
+            { icon:"https://nosapki.com/images/icons/2828.png", text:"Laurenas Ring ×1" },
+            { icon:"https://nosapki.com/images/icons/2827.png", text:"Laurenas Armreif ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Kleine Hexe ×1" }
+          ]
+        },
+        {
+          logo:{src:"https://i.postimg.cc/Btf6nPws/sagenumwobene-Box.png", title:"Sagenumwobene Hexentruhe"},
+          title:"Laurenas sagenumwobene Hexentruhe",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2706.png", text:"Abtrünniger-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2707.png", text:"Racheengel-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2708.png", text:"Erzmagier-Spezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2709.png", text:"Laurenas Partnerspezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2697.png", text:"Erzengel Luzifers Partnerspezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2701.png", text:"Laurenas Hexenhut ×1" },
+            { icon:"https://nosapki.com/images/icons/1030.png", text:"Vollmondkristall ×3" },
+            { icon:"https://nosapki.com/images/icons/2282.png", text:"Engelsfeder ×5" },
+            { icon:"https://nosapki.com/images/icons/2285.png", text:"Glänzende blaue Seele ×1" },
+            { icon:"https://nosapki.com/images/icons/2354.png", text:"Gelber Edelstein ×7" },
+            { icon:"https://nosapki.com/images/icons/2353.png", text:"Grüner Edelstein ×3" },
+            { icon:"https://nosapki.com/images/icons/2601.png", text:"Kleiner Rubin der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2603.png", text:"Kleiner Saphir der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2602.png", text:"Kleiner Obsidian der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2604.png", text:"Kleiner Topas der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2597.png", text:"Rubin der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2599.png", text:"Saphir der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2598.png", text:"Obsidian der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2600.png", text:"Topas der Vollendung ×2" },
+            { icon:"https://nosapki.com/images/icons/2840.png", text:"Zwielichtessenz ×1" },
+            { icon:"https://nosapki.com/images/icons/2829.png", text:"Laurenas Halskette ×1" },
+            { icon:"https://nosapki.com/images/icons/2828.png", text:"Laurenas Ring ×1" },
+            { icon:"https://nosapki.com/images/icons/2827.png", text:"Laurenas Armreif ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Kleine Hexe ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/250V763F/Laurena-Map.jpg","https://i.postimg.cc/Twhh76D8/Laurena-Boss.jpg"]
+  },
+
+  /* ===== Zenas – Licht ===== */
+  { slug:"zenas", name:"Zenas",
+    icon:"https://i.postimg.cc/s2HpKy2S/Zenas-Raid.png",
+    start:"https://i.postimg.cc/4dKpSMK0/Himmelstor-4.png", startName:"Himmelstor 4",
+    level:"90–99", players:"5–20", fame:"2.700",
+    elements:["Licht"],
+    desc:"Zenas kann Adds einsaugen und sich heilen. Vorbereitung/Buffs abstimmen.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/Fs0Vv2P5/ZenasBox.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox der Zenas",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2759.png", text:"Versiegeltes Himmelsschwert ×1" },
+            { icon:"https://nosapki.com/images/icons/2761.png", text:"Versiegelter Himmelsbogen ×1" },
+            { icon:"https://nosapki.com/images/icons/2760.png", text:"Versiegelter Himmelsstab ×1" },
+            { icon:"https://nosapki.com/images/icons/2762.png", text:"Versiegelte Himmelsarmbrust ×1" },
+            { icon:"https://nosapki.com/images/icons/2764.png", text:"Versiegelter Himmelsdolch ×1" },
+            { icon:"https://nosapki.com/images/icons/2763.png", text:"Versiegelte Himmelszauberwaffe ×1" },
+            { icon:"https://nosapki.com/images/icons/4070.png", text:"Marke des magischen blauen Drachen ×1" },
+            { icon:"https://nosapki.com/images/icons/2774.png", text:"Versiegelte schwere Himmelsrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2776.png", text:"Versiegelte Himmelslederrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2775.png", text:"Versiegeltes Himmelsgewand ×1" },
+            { icon:"https://nosapki.com/images/icons/2781.png", text:"Versiegelter Himmelshelm ×1" },
+            { icon:"https://nosapki.com/images/icons/2793.png", text:"Versiegelter Himmelslederhut ×1" },
+            { icon:"https://nosapki.com/images/icons/2794.png", text:"Versiegelter Himmelshaarreif ×1" },
+            { icon:"https://nosapki.com/images/icons/2792.png", text:"Zenas' Luxuriöse High Heels ×1" },
+            { icon:"https://nosapki.com/images/icons/2770.png", text:"Versiegelte Himmelshandschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/2771.png", text:"Versiegelte Himmelsschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/1685.png", text:"Engelsflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/2650.png", text:"Erzengelflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/2741.png", text:"Seide ×3" },
+            { icon:"https://nosapki.com/images/icons/2755.png", text:"Kristall der Balance ×3" },
+            { icon:"https://nosapki.com/images/icons/2753.png", text:"Intaktes Oreichalkos ×3" },
+            { icon:"https://nosapki.com/images/icons/2604.png", text:"Kleiner Topas der Vollendung ×3" },
+            { icon:"https://nosapki.com/images/icons/2600.png", text:"Topas der Vollendung ×3" },
+            { icon:"https://nosapki.com/images/icons/2548.png", text:"Drachenherz ×2" },
+            { icon:"https://nosapki.com/images/icons/2285.png", text:"Glänzende blaue Seele ×3" },
+            { icon:"https://nosapki.com/images/icons/2282.png", text:"Engelsfeder ×10" },
+            { icon:"https://nosapki.com/images/icons/2745.png", text:"Ancelloans Zweitwaffen-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/2747.png", text:"Ancelloans Rüstungs-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/1025.png", text:"Cellon (Level 9) ×1" },
+            { icon:"https://nosapki.com/images/icons/2834.png", text:"Zenas' Ei ×1" },
+            { icon:"https://nosapki.com/images/icons/4049.png", text:"Zenas Himmelsring ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Engelchen ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/MTh12DVp/ZenasMap.jpg"]
+  },
+
+  /* ===== Erenia – Schatten ===== */
+  { slug:"erenia", name:"Erenia",
+    icon:"https://i.postimg.cc/zvr3FPTK/Erenia-Raid.png",
+    start:"https://i.postimg.cc/T2VK3fX9/H-llentor-4.png", startName:"Höllentor 4",
+    level:"90–99", players:"5–15", fame:"2.700",
+    elements:["Schatten"],
+    desc:"Wächter & Aufseher Amon besiegen; Hebel bedienen. Boss-Mechanik mit oben/unten beachten.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/3xS4Q1HQ/Erenia-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox der Erenia",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2767.png", text:"Versiegeltes Höllenschwert ×1" },
+            { icon:"https://nosapki.com/images/icons/2769.png", text:"Versiegelter Höllenbogen ×1" },
+            { icon:"https://nosapki.com/images/icons/2768.png", text:"Versiegelter Höllenstab ×1" },
+            { icon:"https://nosapki.com/images/icons/2780.png", text:"Versiegelte Höllenarmbrust ×1" },
+            { icon:"https://nosapki.com/images/icons/2766.png", text:"Versiegelter Höllendolch ×1" },
+            { icon:"https://nosapki.com/images/icons/2765.png", text:"Versiegelte Höllenzauberwaffe ×1" },
+            { icon:"https://nosapki.com/images/icons/4073.png", text:"Marke der magischen schwarzen Schildkröte ×1" },
+            { icon:"https://nosapki.com/images/icons/2777.png", text:"Versiegelte schwere Höllenrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2779.png", text:"Versiegelte Höllenlederrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2778.png", text:"Versiegeltes Höllengewand ×1" },
+            { icon:"https://nosapki.com/images/icons/2782.png", text:"Versiegelter Höllenhelm ×1" },
+            { icon:"https://nosapki.com/images/icons/2795.png", text:"Versiegelter Höllenlederhut ×1" },
+            { icon:"https://nosapki.com/images/icons/2796.png", text:"Versiegelter Höllenhaarreif ×1" },
+            { icon:"https://nosapki.com/images/icons/2791.png", text:"Erenias handgefertigtes Horn ×1" },
+            { icon:"https://nosapki.com/images/icons/2772.png", text:"Versiegelte Höllenhandschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/2773.png", text:"Versiegelte Höllenschuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/1686.png", text:"Dämonenflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/2651.png", text:"Erzdämonenflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/2741.png", text:"Seide ×3" },
+            { icon:"https://nosapki.com/images/icons/2755.png", text:"Kristall der Balance ×3" },
+            { icon:"https://nosapki.com/images/icons/2753.png", text:"Intaktes Oreichalkos ×3" },
+            { icon:"https://nosapki.com/images/icons/2602.png", text:"Kleiner Obsidian der Vollendung ×3" },
+            { icon:"https://nosapki.com/images/icons/2598.png", text:"Obsidian der Vollendung ×3" },
+            { icon:"https://nosapki.com/images/icons/2548.png", text:"Drachenherz ×2" },
+            { icon:"https://nosapki.com/images/icons/2285.png", text:"Glänzende blaue Seele ×3" },
+            { icon:"https://nosapki.com/images/icons/2282.png", text:"Engelsfeder ×10" },
+            { icon:"https://nosapki.com/images/icons/2744.png", text:"Ancelloans Waffen-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/2746.png", text:"Ancelloans Accessoire-Produktionsschriftrolle ×1" },
+            { icon:"https://nosapki.com/images/icons/1025.png", text:"Cellon (Level 9) ×1" },
+            { icon:"https://nosapki.com/images/icons/2836.png", text:"Erenias Ei ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Teufelchen ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/C5s5PH4t/Erenia-Map.jpg"]
+  },
+
+  /* ===== Unvollendete Fernon – Feuer (2 Kisten) ===== */
+  { slug:"fernon", name:"Unvollendete Fernon",
+    icon:"https://i.postimg.cc/BnLstBK0/Fernon-Raid.png",
+    start:"https://i.postimg.cc/zB51tmPz/Weg-zum-Tempelplatz.png", startName:"Weg zum Tempelplatz",
+    level:"92–99", players:"5–8", fame:"2.760",
+    elements:["Feuer"],
+    desc:"Hebel öffnen Bossraum. Schwerter aufnehmen (Debuffs). Lila Kreis = nicht angreifen.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/Rhg9JPdM/Fernon-Box.png", title:"Einfache Schatztruhe"},
+          title:"Einfache Schatztruhe der Zerstörerin Fernon",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2814.png", text:"Die linke Klinge des zerbrochenen Krem ×1" },
+            { icon:"https://nosapki.com/images/icons/2816.png", text:"Azraels Flügel ×1" },
+            { icon:"https://nosapki.com/images/icons/2826.png", text:"Fernons Schuhe ×1" },
+            { icon:"https://nosapki.com/images/icons/2767.png", text:"Versiegeltes Höllenschwert ×1" },
+            { icon:"https://nosapki.com/images/icons/2769.png", text:"Versiegelter Höllenbogen ×1" },
+            { icon:"https://nosapki.com/images/icons/2768.png", text:"Versiegelter Höllenstab ×1" },
+            { icon:"https://nosapki.com/images/icons/2780.png", text:"Versiegelte Höllenarmbrust ×1" },
+            { icon:"https://nosapki.com/images/icons/2766.png", text:"Versiegelter Höllendolch ×1" },
+            { icon:"https://nosapki.com/images/icons/2765.png", text:"Versiegelte Höllenzauberwaffe ×1" },
+            { icon:"https://nosapki.com/images/icons/2777.png", text:"Versiegelte schwere Höllenrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2779.png", text:"Versiegelte Höllenlederrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2778.png", text:"Versiegeltes Höllengewand ×1" },
+            { icon:"https://nosapki.com/images/icons/4041.png", text:"Rüstung des Champions ×1" },
+            { icon:"https://nosapki.com/images/icons/2838.png", text:"Fernons Ei ×1" },
+            { icon:"https://nosapki.com/images/icons/1686.png", text:"Dämonenflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/2651.png", text:"Erzdämonenflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/1025.png", text:"Cellon (Level 9) ×1" },
+            { icon:"https://nosapki.com/images/icons/2748.png", text:"Unbekanntes Metallstück ×1" },
+            { icon:"https://nosapki.com/images/icons/2741.png", text:"Seide ×1" },
+            { icon:"https://nosapki.com/images/icons/2740.png", text:"Beschädigtes Oreichalkos ×1" },
+            { icon:"https://nosapki.com/images/icons/2755.png", text:"Kristall der Balance ×1" },
+            { icon:"https://nosapki.com/images/icons/2758.png", text:"Goldgarn ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Ancelloans Bote ×1" }
+          ]
+        },
+        {
+          logo:{src:"https://i.postimg.cc/Px4n06Bm/Ancelloan-Box.png", title:"Einfache Schatztruhe"},
+          title:"Einfache Schatztruhe der Schöpferin Ancelloan",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2813.png", text:"Die rechte Klinge des zerbrochenen Krem ×1" },
+            { icon:"https://nosapki.com/images/icons/2817.png", text:"Seli-Lushas Lichtzweig ×1" },
+            { icon:"https://nosapki.com/images/icons/4026.png", text:"Gottesfaust ×1" },
+            { icon:"https://nosapki.com/images/icons/2825.png", text:"Azraels Maske ×1" },
+            { icon:"https://nosapki.com/images/icons/2759.png", text:"Versiegeltes Himmelsschwert ×1" },
+            { icon:"https://nosapki.com/images/icons/2761.png", text:"Versiegelter Himmelsbogen ×1" },
+            { icon:"https://nosapki.com/images/icons/2760.png", text:"Versiegelter Himmelsstab ×1" },
+            { icon:"https://nosapki.com/images/icons/2762.png", text:"Versiegelte Himmelsarmbrust ×1" },
+            { icon:"https://nosapki.com/images/icons/2764.png", text:"Versiegelter Himmelsdolch ×1" },
+            { icon:"https://nosapki.com/images/icons/2763.png", text:"Versiegelte Himmelszauberwaffe ×1" },
+            { icon:"https://nosapki.com/images/icons/2774.png", text:"Versiegelte schwere Himmelsrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2776.png", text:"Versiegelte Himmelslederrüstung ×1" },
+            { icon:"https://nosapki.com/images/icons/2775.png", text:"Versiegeltes Himmelsgewand ×1" },
+            { icon:"https://nosapki.com/images/icons/2838.png", text:"Fernons Ei ×1" },
+            { icon:"https://nosapki.com/images/icons/1685.png", text:"Engelsflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/2650.png", text:"Erzengelflügel ×1" },
+            { icon:"https://nosapki.com/images/icons/1025.png", text:"Cellon (Level 9) ×1" },
+            { icon:"https://nosapki.com/images/icons/2748.png", text:"Unbekanntes Metallstück ×1" },
+            { icon:"https://nosapki.com/images/icons/2741.png", text:"Seide ×1" },
+            { icon:"https://nosapki.com/images/icons/2740.png", text:"Beschädigtes Oreichalkos ×1" },
+            { icon:"https://nosapki.com/images/icons/2755.png", text:"Kristall der Balance ×1" },
+            { icon:"https://nosapki.com/images/icons/2758.png", text:"Goldgarn ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Ancelloans Bote ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/YSQHz2RD/Fernon-Map.jpg","https://i.postimg.cc/qvPrK6sC/Fernon-Boss.jpg"]
+  },
+
+  /* ===== Fafnir – Feuer ===== */
+  { slug:"fafnir", name:"Fafnir",
+    icon:"https://i.postimg.cc/P5h9nbQy/Fafnir-Raid.png",
+    start:"https://i.postimg.cc/Hk2KYJSg/In-Schloss-Aria.png", startName:"Im Schloss Aria",
+    level:"70–99", players:"5–15", fame:"2.100",
+    elements:["Feuer"],
+    desc:"Kometen/Feuerwand/Zähne/Feuersturm-Mechaniken beachten.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/v8JC3w1p/Fafnir-Box.png", title:"Raidbox"},
+          title:"Raidbox des Fafnir",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2048.png", text:"Hochwertiges Leder ×1" },
+            { icon:"https://nosapki.com/images/icons/2044.png", text:"Hochwertiger Stoff ×1" },
+            { icon:"https://nosapki.com/images/icons/2908.png", text:"Reine Essenz des Feuers ×3" },
+            { icon:"https://nosapki.com/images/icons/2917.png", text:"Fafnirs Energie ×1" },
+            { icon:"https://nosapki.com/images/icons/2909.png", text:"Fafnirs Horn ×1" },
+            { icon:"https://nosapki.com/images/icons/2910.png", text:"Fafnirs Herz ×1" },
+            { icon:"https://nosapki.com/images/icons/2911.png", text:"Fafnirs Backenzahn ×1" },
+            { icon:"https://nosapki.com/images/icons/2913.png", text:"Fafnirs Schuppe ×1" },
+            { icon:"https://nosapki.com/images/icons/2200.png", text:"Nadel ×1" },
+            { icon:"https://nosapki.com/images/icons/2208.png", text:"Garnspule ×1" },
+            { icon:"https://nosapki.com/images/icons/2550.png", text:"Drachenhaut ×1" },
+            { icon:"https://nosapki.com/images/icons/2549.png", text:"Drachenblut ×1" },
+            { icon:"https://nosapki.com/images/icons/2548.png", text:"Drachenherz ×1" },
+            { icon:"https://nosapki.com/images/icons/1011.png", text:"Riesiger Erholungstrank ×10" },
+            { icon:"https://nosapki.com/images/icons/2188.png", text:"Blaupausen von Fafnirs Jagdhorn ×1" },
+            { icon:"https://nosapki.com/images/icons/987.png",  text:"Elkaim ×1" },
+            { icon:"https://nosapki.com/images/icons/988.png",  text:"Ladine ×1" },
+            { icon:"https://nosapki.com/images/icons/989.png",  text:"Rumial ×1" },
+            { icon:"https://nosapki.com/images/icons/993.png",  text:"Varik ×1" },
+            { icon:"https://nosapki.com/images/icons/2904.png", text:"Drachenflügel-Dekoration ×1" },
+            { icon:"https://nosapki.com/images/icons/2914.png", text:"Fafnirs Jagdhorn ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Schatzjäger ×1" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/wTDZr4L3/Fafnir-Map.jpg","https://i.postimg.cc/4dMqDrWH/Fafnir-Boss.jpg"]
+  },
+
+  /* ===== Yertirand – Schatten (2 Truhen) ===== */
+  { slug:"yertirand", name:"Yertirand",
+    icon:"https://i.postimg.cc/d3YmZ61S/Yertirand-Raid.png",
+    start:"https://i.postimg.cc/wB1kC3ZF/Vergessener-Turm.png", startName:"Vergessener Turm",
+    level:"70–99", players:"5–15", fame:"2.100",
+    elements:["Schatten"],
+    desc:"Labyrinth: Hebel finden, Endportal nur mit Hebel offen. Zufalls-PvP/Relog-Regeln beachten.",
+    box:{
+      boxes:[
+        {
+          logo:{src:"https://i.postimg.cc/zf4k881N/Yertirand-Box.png", title:"Einfache Raidbox"},
+          title:"Einfache Raidbox des verdorbenen Yertirand",
+          items:[
+            { icon:"https://nosapki.com/images/icons/298.png",  text:"Goldrüstung der Räuberbande ×1" },
+            { icon:"https://nosapki.com/images/icons/296.png",  text:"Goldtunika der Räuberbande ×1" },
+            { icon:"https://nosapki.com/images/icons/272.png",  text:"Goldrobe der Räuberbande ×1" },
+            { icon:"https://nosapki.com/images/icons/349.png",  text:"Langschwert der Wüstenräuber ×1" },
+            { icon:"https://nosapki.com/images/icons/353.png",  text:"Bogen der Wüstenräuber ×1" },
+            { icon:"https://nosapki.com/images/icons/356.png",  text:"Gehstock der Wüstenräuber ×1" },
+            { icon:"https://nosapki.com/images/icons/2938.png", text:"Yertirands Zauberstab ×1" },
+            { icon:"https://nosapki.com/images/icons/2939.png", text:"Zauberstab des verdorbenen Yertirand ×1" },
+            { icon:"https://nosapki.com/images/icons/2282.png", text:"Engelsfeder ×10" },
+            { icon:"https://nosapki.com/images/icons/2548.png", text:"Drachenherz ×1" },
+            { icon:"https://nosapki.com/images/icons/2352.png", text:"Blauer Edelstein ×1" },
+            { icon:"https://nosapki.com/images/icons/2901.png", text:"Altes Wikingerkostüm (7 Tage) ×1" },
+            { icon:"https://nosapki.com/images/icons/2902.png", text:"Friggs Schlüssel ×1" },
+            { icon:"https://nosapki.com/images/icons/2903.png", text:"Ragnars Schlüssel ×1" },
+            { icon:"https://nosapki.com/images/icons/2915.png", text:"Erdimiens Schlüssel ×1" },
+            { icon:"https://nosapki.com/images/icons/2926.png", text:"Jennifers Schlüssel ×1" },
+            { icon:"https://nosapki.com/images/icons/2941.png", text:"Yertirands Schlüssel ×1" },
+            { icon:"https://nosapki.com/images/icons/2943.png", text:"Knochenkrieger Ragnars Partnerspezialistenkarte ×1" },
+            { icon:"https://nosapki.com/images/icons/2944.png", text:"Magischer Knochendrache ×1" },
+            { icon:"https://nosapki.com/images/icons/4144.png", text:"Verdorben ×1" }
+          ]
+        },
+        {
+          logo:{src:"https://i.postimg.cc/m2TybmKP/R-tseltruhe.png", title:"Rätseltruhe"},
+          title:"Rätseltruhe des Lichs",
+          items:[
+            { icon:"https://nosapki.com/images/icons/2945.png", text:"Halskette mit der Energie des Lichs ×1" },
+            { icon:"https://nosapki.com/images/icons/2947.png", text:"Ring mit der Energie des Lichs ×1" },
+            { icon:"https://nosapki.com/images/icons/2946.png", text:"Armreif mit der Energie des Lichs ×1" },
+            { icon:"https://nosapki.com/images/icons/2948.png", text:"Helm des Drachenritters ×1" },
+            { icon:"https://nosapki.com/images/icons/2949.png", text:"Schuhe des Drachenritters ×1" },
+            { icon:"https://nosapki.com/images/icons/2940.png", text:"Handschuhe des Drachenritters ×1" },
+            { icon:"https://nosapki.com/images/icons/2725.png", text:"Legendäre Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2723.png", text:"Mysteriöse Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2720.png", text:"Antike Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2724.png", text:"Exzellente Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2722.png", text:"Hochqualitative Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2719.png", text:"Gute Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2721.png", text:"Nützliche Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2718.png", text:"Ehrenmedaille ×1" },
+            { icon:"https://nosapki.com/images/icons/2906.png", text:"Fafnirs frittierte Mahlzeit ×50" }
+          ]
+        }
+      ]
+    },
+    maps:["https://i.postimg.cc/t4Td6Yqy/Yertirand-Map.jpg","https://i.postimg.cc/3NFjXG0r/Yertirand-Boss.jpg"]
+  }
+];
+
+    // ===== Sidebar + Auswahl =====
+    const raidListEl = document.getElementById('raidList');
+    const raidSearch = document.getElementById('raidSearch');
+    const raidName = document.getElementById('raidName');
+    const raidIcon = document.getElementById('raidIcon');
+
+    function renderList(){
+      const q = raidSearch.value.trim().toLowerCase();
+      raidListEl.innerHTML = "";
+      RAIDS.forEach(r=>{
+        if(q && !r.name.toLowerCase().includes(q)) return;
+        const item = document.createElement('div');
+        item.className = 'raid-item';
+        item.setAttribute('role','option');
+        item.dataset.slug = r.slug || makeSlug(r.name);
+        item.innerHTML = `<img src="${r.icon}" alt=""><span>${r.name}</span>`;
+        item.addEventListener('click',()=>selectRaid(item.dataset.slug));
+        raidListEl.appendChild(item);
+      });
+      markActive();
+    }
+    function markActive(){
+      raidListEl.querySelectorAll('.raid-item').forEach(el=>{
+        el.classList.toggle('active', el.dataset.slug===currentSlug);
+      });
+    }
+
+    // ===== Overview/Box/Maps DOM =====
+    const metaGrid = document.getElementById('metaGrid');
+    const elementsWrap = document.getElementById('elements');
+    const descEl   = document.getElementById('desc');
+    const startImg = document.getElementById('startImg');
+    const startName= document.getElementById('startName');
+
+    // Box
+    const boxLogo   = document.getElementById('boxLogo');
+    const boxTitle  = document.getElementById('boxTitle');
+    const boxItems  = document.getElementById('boxItems');
+    const boxEmpty  = document.getElementById('boxEmpty');
+    const boxPrev   = document.getElementById('boxPrev');
+    const boxNext   = document.getElementById('boxNext');
+
+    // Maps
+    const track = document.getElementById('track');
+    const dotsWrap = document.getElementById('dots');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const stage = document.getElementById('stage');
+
+    let currentSlug = null;
+    let slideIndex = 0;
+
+    // Box-Carousel State
+    let currentBoxIndex = 0;
+
+    function buildMaps(maps){
+      track.innerHTML=""; dotsWrap.innerHTML="";
+      slideIndex=0;
+
+      if(!maps || maps.length===0){
+        const holder=document.createElement('div');
+        holder.className='slide ph';
+        holder.innerHTML='Keine Karten hinzugefügt.';
+        track.appendChild(holder);
+        updateSlider();
+        return;
+      }
+
+      maps.forEach((url,i)=>{
+        const s=document.createElement('div'); s.className='slide';
+        s.innerHTML=`<img src="${url}" alt="Raid-Karte ${i+1}">`;
+        track.appendChild(s);
+
+        const d=document.createElement('button');
+        d.className='dot'+(i===0?' active':'');
+        d.addEventListener('click',()=>{slideIndex=i;updateSlider();});
+        dotsWrap.appendChild(d);
+      });
+      updateSlider();
+    }
+    function updateSlider(){
+      track.style.transform = `translateX(-${slideIndex*100}%)`;
+      dotsWrap.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===slideIndex));
+    }
+    function next(){ const n=track.children.length; slideIndex=(slideIndex+1)%n; updateSlider(); }
+    function prev(){ const n=track.children.length; slideIndex=(slideIndex-1+n)%n; updateSlider(); }
+
+    prevBtn.addEventListener('click',prev);
+    nextBtn.addEventListener('click',next);
+    window.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); });
+    let startX=null;
+    stage.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
+    stage.addEventListener('touchend',e=>{
+      if(startX==null) return;
+      const dx=e.changedTouches[0].clientX-startX;
+      if(Math.abs(dx)>50){ dx<0?next():prev(); }
+      startX=null;
+    },{passive:true});
+
+    function renderMeta(r){
+      metaGrid.innerHTML="";
+      metaGrid.appendChild(meta("Level",   r.level,  ICONS.level));
+      metaGrid.appendChild(meta("Spieler", r.players,ICONS.users));
+      metaGrid.appendChild(meta("Ruf (Abschluss)", r.fame, RUF_ICON));
+    }
+    function renderElements(r){
+      elementsWrap.innerHTML = (r.elements||["Kein Element"]).map(chip).join("");
+    }
+
+    function renderBox(r){
+      const boxes = (r.box && r.box.boxes) ? r.box.boxes : [];
+      if(!boxes.length){
+        boxLogo.src = ""; boxTitle.textContent = "Raidbox";
+        boxItems.innerHTML = "";
+        boxEmpty.style.display = "";
+        boxPrev.disabled = true; boxNext.disabled = true;
+        return;
+      }
+      if(currentBoxIndex >= boxes.length) currentBoxIndex = 0;
+      const b = boxes[currentBoxIndex];
+
+      // Kopf
+      boxLogo.src = b.logo?.src || "";
+      boxLogo.alt = b.logo?.title || "Box-Logo";
+      boxTitle.textContent = b.title || "Raidbox";
+
+      // Items
+      if(b.items && b.items.length){
+        boxEmpty.style.display = "none";
+        boxItems.innerHTML = b.items.map(it =>
+          `<li>${it.icon ? `<img src="${it.icon}" alt="">` : ""}<span>${it.text || ""}</span></li>`
+        ).join("");
+      }else{
+        boxItems.innerHTML = "";
+        boxEmpty.style.display = "";
+      }
+
+      // Pfeile aktivieren/deaktivieren
+      boxPrev.disabled = boxes.length<=1;
+      boxNext.disabled = boxes.length<=1;
+
+      // Events (einmal binden)
+      boxPrev.onclick = ()=>{ if(boxes.length>1){ currentBoxIndex=(currentBoxIndex-1+boxes.length)%boxes.length; renderBox(r);} };
+      boxNext.onclick = ()=>{ if(boxes.length>1){ currentBoxIndex=(currentBoxIndex+1)%boxes.length; renderBox(r);} };
+    }
+
+    function selectRaid(slug){
+      const r = RAIDS.find(x=>(x.slug||makeSlug(x.name))===slug);
+      if(!r) return;
+      currentSlug = slug;
+      location.hash = `raid=${slug}`;
+      raidName.textContent = r.name;
+      raidIcon.src = r.icon; raidIcon.alt = r.name;
+
+      renderMeta(r);
+      renderElements(r);
+      descEl.textContent = r.desc && r.desc.trim() ? r.desc : "Beschreibung folgt…";
+
+      // Startkarte – Name von dir gepflegt
+      startImg.src = r.start || "";
+      startName.textContent = r.startName || "";
+
+      // Raidbox (Text-basiert)
+      currentBoxIndex = 0;
+      renderBox(r);
+
+      // Karten
+      buildMaps(r.maps);
+
+      markActive();
+    }
+
+    // Tabs
+    const tabsBtns = document.querySelectorAll('.tab-btn');
+    const panesAll = document.querySelectorAll('.tab-pane');
+    tabsBtns.forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        tabsBtns.forEach(b=>b.classList.remove('active'));
+        panesAll.forEach(p=>p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Suche
+    raidSearch.addEventListener('input',renderList);
+
+    // Init
+    renderList();
+    const m = location.hash.match(/raid=([^&]+)/);
+    selectRaid(m ? m[1] : RAIDS[0].slug);
+  </script>
+</body>
+</html>

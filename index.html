@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Nostale Fanpage</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+      color: #fff;
+      background: url("https://i.postimg.cc/PJzGHfHB/background.png") no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 30px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      flex-wrap: wrap;
+    }
+
+    header a.logo {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    header a.logo img {
+      max-height: 60px;
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.7));
+      transition: transform 0.3s ease;
+    }
+
+    header a.logo img:hover {
+      transform: scale(1.05);
+    }
+
+    nav {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: 0.3s ease;
+    }
+
+    nav a:hover {
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 20px;
+    }
+
+    .card {
+      max-width: 750px;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      text-align: center;
+      animation: fadeIn 1.2s ease forwards;
+    }
+
+    .card h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #ffe680;
+      text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+    }
+
+    .card p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #eee;
+      margin-bottom: 30px;
+    }
+
+    .official-link {
+      margin-top: 20px;
+    }
+
+    .official-link a {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: 0.3s ease;
+      font-weight: 600;
+    }
+
+    .official-link a:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    }
+
+    .official-link img {
+      height: 30px;
+      width: auto;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 20px;
+      font-size: 0.9rem;
+      background: rgba(0, 0, 0, 0.5);
+      border-top: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+      color: #ccc;
+    }
+
+    .socials {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .socials a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      transition: 0.3s;
+    }
+
+    .socials img {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .socials a:hover img {
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 10px #ffe680);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">
+      <img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Nostale Logo">
+    </a>
+
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>✨ Willkommen, Abenteurer! ✨</h2>
+      <p>
+        Tauche ein in die magische Welt von <strong>Nostale</strong>.  
+        Entdecke Heldenbücher, rechne deine Cellas, finde Rezepte,  
+        Damage-Tipps, Raid-Infos und alles rund um Perfektion!
+      </p>
+
+      <div class="official-link">
+        <a href="https://de.nostale.gameforge.com" target="_blank">
+          <img src="https://i.postimg.cc/J7QDM32y/gameforge.png" alt="Gameforge Logo">
+          Offizielle Gameforge-Seite besuchen
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Nostale Fanpage – Erstellt mit ❤️  
+    <div class="socials">
+      <a href="https://discord.com" target="_blank" aria-label="Discord">
+        <img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord Logo">
+      </a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram">
+        <img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram Logo">
+      </a>
+      <a href="https://x.com" target="_blank" aria-label="X">
+        <img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X Logo">
+      </a>
+    </div>
+  </footer>
+
+</body>
+</html>

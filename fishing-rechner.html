@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nostale Fanpage – Fishing-Rechner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{margin:0;font-family:'Segoe UI','Trebuchet MS',system-ui,-apple-system,sans-serif;color:#fff;background:url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 24px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.5);flex-wrap:wrap}
+    header .logo img{max-height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
+    nav{flex:1;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+    nav a{text-decoration:none;color:#fff;padding:8px 14px;border-radius:12px;font-weight:600;transition:.25s ease}
+    nav a:hover{background:rgba(255,255,255,.15)}
+
+    .page{width:min(1000px,92vw);margin:40px auto;display:flex;flex-direction:column;gap:20px}
+    h1{margin:0;text-shadow:0 0 12px rgba(255,215,0,.45)}
+    .card{background:rgba(0,0,0,.55);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:24px;display:flex;flex-direction:column;gap:16px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px;text-align:center}
+    th{background:rgba(255,255,255,.12);font-weight:700}
+    td{background:rgba(255,255,255,.06)}
+    .pos{display:flex;align-items:center;gap:10px;justify-content:flex-start}
+    .pos img{width:26px;height:26px;border-radius:6px;box-shadow:0 0 8px rgba(255,255,255,.2)}
+    input{width:120px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;text-align:right}
+    input[readonly]{opacity:.85;cursor:not-allowed}
+    input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type=number]{-moz-appearance:textfield}
+
+    .result{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:12px}
+    .box{flex:1;min-width:240px;padding:14px;border-radius:14px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2)}
+    .reset{align-self:flex-end;padding:10px 20px;background:#c0392b;border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer}
+    .reset:hover{background:#e74c3c}
+
+    .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.18);margin-top:auto}
+    .footer p{margin:0 0 10px;color:#fff;font-weight:500}
+    .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
+    .footer .socials img{width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5));transition:transform .15s ease}
+    .footer .socials img:hover{transform:translateY(-1px) scale(1.05)}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo" aria-label="Zur Startseite">
+      <img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo">
+    </a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Fishing-Rechner</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <section class="page">
+    <h1>Fishing-Rechner</h1>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Menge</th>
+            <th>Preis</th>
+            <th>Gesamt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="pos"><img src="https://i.postimg.cc/02kQ5MW6/fishfillet.png" alt=""> Fish Fillet</td>
+            <td><input id="fishQty" type="number" value="0" readonly></td>
+            <td><input id="fishPrice" type="number" value="66000"></td>
+            <td id="fishTotal">0 Gold</td>
+          </tr>
+          <tr>
+            <td class="pos"><img src="https://i.postimg.cc/RVSFC6sh/catfish.png" alt=""> Catfish Pet Food</td>
+            <td><input id="catQty" type="number" value="0" readonly></td>
+            <td><input id="catPrice" type="number" value="4000"></td>
+            <td id="catTotal">0 Gold</td>
+          </tr>
+          <tr>
+            <td class="pos"><img src="https://i.postimg.cc/5N409Y7X/lure.png" alt=""> Lure</td>
+            <td><input id="lureQty" type="number" value="0" readonly></td>
+            <td><input id="lurePrice" type="number" value="90000"></td>
+            <td id="lureTotal">0 Gold</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="result">
+        <div class="box">
+          Multiplikator: <input id="multi" type="number" min="1" value="1" style="width:80px;text-align:center">
+        </div>
+        <div class="box">
+          Gesamtkosten (Fish + Catfish): <strong id="costs">0 Gold</strong>
+        </div>
+        <div class="box">
+          Gewinn (Lure − Kosten): <strong id="profit">0 Gold</strong>
+        </div>
+      </div>
+
+      <button class="reset" id="resetBtn">Zurücksetzen</button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
+    <div class="socials">
+      <a href="https://discord.com" target="_blank" aria-label="Discord"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
+      <a href="https://x.com" target="_blank" aria-label="X"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></a>
+    </div>
+  </footer>
+
+  <script>
+    const multi=document.getElementById("multi");
+    const fishQty=document.getElementById("fishQty");
+    const catQty=document.getElementById("catQty");
+    const lureQty=document.getElementById("lureQty");
+    const fishPrice=document.getElementById("fishPrice");
+    const catPrice=document.getElementById("catPrice");
+    const lurePrice=document.getElementById("lurePrice");
+    const fishTotal=document.getElementById("fishTotal");
+    const catTotal=document.getElementById("catTotal");
+    const lureTotal=document.getElementById("lureTotal");
+    const costs=document.getElementById("costs");
+    const profit=document.getElementById("profit");
+    const resetBtn=document.getElementById("resetBtn");
+
+    function fmt(n){return (Number(n)||0).toLocaleString("de-DE")+" Gold";}
+
+    function calc(){
+      const m=+multi.value||0;
+      const fishQ=3*m;
+      const catQ=1*m;
+      const lureQ=3*m;
+
+      const fishP=+fishPrice.value||0;
+      const catP=+catPrice.value||0;
+      const lureP=+lurePrice.value||0;
+
+      const fishT=fishQ*fishP;
+      const catT=catQ*catP;
+      const lureT=lureQ*lureP;
+
+      const totalCost=fishT+catT;
+      const gain=lureT-totalCost;
+
+      fishQty.value=fishQ;
+      catQty.value=catQ;
+      lureQty.value=lureQ;
+
+      fishTotal.textContent=fmt(fishT);
+      catTotal.textContent=fmt(catT);
+      lureTotal.textContent=fmt(lureT);
+      costs.textContent=fmt(totalCost);
+      profit.textContent=fmt(gain);
+      profit.style.color=gain>=0?"#2ecc71":"#e74c3c";
+    }
+
+    [multi,fishPrice,catPrice,lurePrice].forEach(el=>el.addEventListener("input",calc));
+    resetBtn.addEventListener("click",()=>{multi.value=1;fishPrice.value=0;catPrice.value=0;lurePrice.value=0;calc();});
+    calc();
+  </script>
+</body>
+</html>

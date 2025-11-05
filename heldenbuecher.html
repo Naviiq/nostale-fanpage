@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nostale Fanpage – Heldenbücher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Grundlayout */
+    body{margin:0;font-family:'Segoe UI','Trebuchet MS',system-ui,-apple-system,sans-serif;color:#fff;background:url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 24px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.5);flex-wrap:wrap}
+    header .logo img{max-height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
+    nav{flex:1;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+    nav a{text-decoration:none;color:#fff;padding:8px 14px;border-radius:12px;font-weight:600;transition:.25s ease}
+    nav a:hover{background:rgba(255,255,255,.15)}
+
+    /* Seite */
+    .page{width:min(900px,92vw);margin:40px auto;display:flex;flex-direction:column;gap:16px}
+    h1{margin:0;text-shadow:0 0 12px rgba(255,215,0,.45)}
+
+    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .controls input[type="text"]{flex:1;min-width:240px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:10px;padding:10px 12px}
+    .btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;font-weight:600}
+    .btn:hover{background:rgba(255,255,255,.2)}
+    .btn.secondary{background:rgba(0,0,0,.35)}
+    .muted{opacity:.85}
+
+    /* Fortschritt */
+    .progress{height:12px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden}
+    .bar{height:100%;background:linear-gradient(90deg,#8ef,#6f8);width:0%}
+
+    /* Vertikale Buchliste */
+    .list{display:flex;flex-direction:column;gap:12px}
+    .book{display:flex;gap:12px;align-items:flex-start;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:12px}
+    .book img.icon{width:44px;height:44px;border-radius:10px;box-shadow:0 0 8px rgba(255,255,255,.2)}
+    .book h3{margin:0 0 6px 0;font-size:1.05rem}
+    .desc{opacity:.85;font-size:.92rem}
+    .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+
+    /* Checkbox: beim Abhaken nur füllen (kein Haken) */
+    .check{
+      appearance:none;width:22px;height:22px;border-radius:6px;
+      border:2px solid rgba(255,255,255,.55);
+      background:rgba(255,255,255,.08);
+      cursor:pointer;display:inline-block;transition:.15s ease-in-out;
+    }
+    .check:checked{
+      border-color:#8fd;
+      background:linear-gradient(135deg,#3aa0ff,#00d2a8);
+    }
+
+    /* Einheitlicher Footer (ohne Gameforge) */
+    .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.18);margin-top:auto}
+    .footer p{margin:0 0 10px;color:#fff;font-weight:500}
+    .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
+    .footer .socials img{width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5));transition:transform .15s ease}
+    .footer .socials img:hover{transform:translateY(-1px) scale(1.05)}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo"><img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo"></a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <section class="page">
+    <h1>Heldenbücher</h1>
+
+    <div class="controls">
+      <input id="search" type="text" placeholder="Suchen… (z. B. PvP, Verteidigung, Memorial …)">
+      <button id="selectAll" class="btn">Alle wählen</button>
+      <button id="clearAll" class="btn secondary">Alle leeren</button>
+      <span class="muted" id="countInfo"></span>
+    </div>
+
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="muted" id="progressText">0 / 52 abgeschlossen</div>
+
+    <div class="list" id="list"></div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
+    <div class="socials">
+      <a href="https://discord.com" target="_blank"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
+      <a href="https://instagram.com" target="_blank"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
+      <a href="https://x.com" target="_blank"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></img></a>
+    </div>
+  </footer>
+
+  <script>
+    const ICONS={pvp:"https://i.postimg.cc/9QrPcspM/buchrot.png",def:"https://i.postimg.cc/GpTjx68N/buchgr-n.png",other:"https://i.postimg.cc/B68RDh4Q/buchgelb.png"};
+
+    // ===== Bücher mit individueller Beschreibung =====
+    const BOOKS = [
+      // PvP (rot)
+      { title: "[Einfach] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 1%.ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤHerolevel: " },
+      { title: "[Mittel] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 2%." },
+      { title: "[Fortgeschritten] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 3%." },
+      { title: "[Hervorragend] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 5%." },
+
+      // Verteidigung (grün)
+      { title: "[Einfach] PvP-Verteidigungserhöhung", type: "def", desc: "Erhöht die Verteidigung im PvP um 1%." },
+      { title: "[Mittel] PvP-Verteidigungserhöhung", type: "def", desc: "Erhöht die Verteidigung im PvP um 2%." },
+      { title: "[Fortgeschritten] PvP-Verteidigungserhöhung", type: "def", desc: "Erhöht die Verteidigung im PvP um 3%." },
+      { title: "[Hervorragend] PvP-Verteidigungserhöhung", type: "def", desc: "Erhöht die Verteidigung im PvP um 5%." },
+
+      // Memorials & Strategien
+      { title: "Memorial des vergessenen Helden D (1)", type: "other", desc: "Erhöht den Nahkampfangriff um 80. Erhöht die Nahangriffsverteidigung um 40." },
+      { title: "Memorial des vergessenen Helden S (1)", type: "other", desc: "Erhöht die Fernangriffskraft um 80. Erhöht die Fernangriffsverteidigung um 40. Erhöht die Hitrate um 160. Erhöht das Ausweichen um 80." },
+      { title: "Memorial des vergessenen Helden J (1)", type: "other", desc: "Erhöht die Magieangriffskraft um 80. Erhöht die Magieverteidigung um 40." },
+      { title: "Memorial des vergessenen Helden M (1)", type: "other", desc: "Erhöht die maximalen HP um 4000." },
+      { title: "Memorial des unbekannten Helden (1)", type: "other", desc: "Erhöht die maximalen MP um 4000." },
+      { title: "Memorial des unbekannten Helden (2)", type: "other", desc: "Erhöht die maximalen MP um 6000." },
+      { title: "Memorial des vergessenen Helden D (2)", type: "other", desc: "Erhöht den Nahkampfangriff um 100. Erhöht die Nahangriffsverteidigung um 50." },
+      { title: "Memorial des vergessenen Helden S (2)", type: "other", desc: "Erhöht die Fernangriffskraft um 100. Erhöht die Fernangriffsverteidigung um 50. Erhöht die Hitrate um 200. Erhöht das Ausweichen um 100." },
+      { title: "Memorial des vergessenen Helden J (2)", type: "other", desc: "Erhöht die Magieangriffskraft um 100. Erhöht die Magieverteidigung um 50." },
+      { title: "Memorial des vergessenen Helden M (2)", type: "other", desc: "Erhöht die maximalen HP um 6000." },
+
+      { title: "Angriffsstrategie von Lord Cuarrys Rittern (1)", type: "other", desc: "Erhöht alle Angriffskräfte um 30." },
+      { title: "Abwehrstrategie von Lord Cuarrys Rittern (1)", type: "other", desc: "Erhöht alle Verteidigungen um 30." },
+      { title: "Abwehrstrategie von Lord Cuarrys Rittern (2)", type: "other", desc: "Erhöht alle Verteidigungen um 50." },
+      { title: "Angriffsstrategie von Lord Cuarrys Rittern (2)", type: "other", desc: "Erhöht alle Angriffskräfte um 50." },
+
+      // Loa-Bücher
+      { title: "Buch des Bären-Loa", type: "other", desc: "Erhöht die maximalen HP um 7000." },
+      { title: "Buch des Adler-Loa", type: "other", desc: "Erhöht die Fernangriffskraft um 120. Erhöht die Fernangriffsverteidigung um 60. Erhöht die Hitrate um 240. Erhöht das Ausweichen um 120." },
+      { title: "Buch des Schlangen-Loa", type: "other", desc: "Erhöht die Magieangriffskraft um 120. Erhöht die Magieverteidigung um 60." },
+      { title: "Buch des Löwen-Loa", type: "other", desc: "Erhöht den Nahkampfangriff um 120. Erhöht die Nahangriffsverteidigung um 60." },
+      { title: "Buch des Geisterkönigs", type: "other", desc: "Erhöht die maximalen MP um 7000." },
+
+      // Sonstige Bücher
+      { title: "Aurelius Roshus Urgeschichte (1)", type: "other", desc: "Erhöht den Erfahrungsgewinn um 5%." },
+      { title: "Memorial der Akamuhändler (1)", type: "other", desc: "Erhöht den Goldgewinn um 3%." },
+
+      // Professionen & Training
+      { title: "Profi-Fischer-Handbuch", type: "other", desc: "Erhöht alle Angriffskräfte um 50. Erhöht alle Verteidigungen um 50." },
+      { title: "Grundlagen-Krafttraining für Köche", type: "other", desc: "Erhöht alle Angriffskräfte um 30. Erhöht alle Verteidigungen um 30." },
+      { title: "Fortgeschrittenen-Krafttraining für Köche", type: "other", desc: "Erhöht alle Angriffskräfte um 50. Erhöht alle Verteidigungen um 50." },
+      { title: "Experten-Krafttraining für Köche", type: "other", desc: "Erhöht alle Angriffskräfte um 100. Erhöht alle Verteidigungen um 100." },
+      { title: "Haustiertrainer-Anleitung 1", type: "other", desc: "Erhöht alle Angriffskräfte um 25. Erhöht alle Verteidigungen um 25." },
+      { title: "Haustiertrainer-Anleitung 2", type: "other", desc: "Erhöht alle Angriffskräfte um 50. Erhöht alle Verteidigungen um 50." },
+      { title: "Haustiertrainer-Anleitung 3", type: "other", desc: "Erhöht alle Angriffskräfte um 100. Erhöht alle Verteidigungen um 100." },
+
+      // Drachen-Lehrbücher
+      { title: "Lehrbuch »Drachenagilität«", type: "other", desc: "Erhöht die Fernangriffskraft um 150. Erhöht die Fernangriffsverteidigung um 75. Erhöht die Hitrate um 300. Erhöht das Ausweichen um 150." },
+      { title: "Lehrbuch »Drachenintellekt«", type: "other", desc: "Erhöht die Magieangriffskraft um 150. Erhöht die Magieverteidigung um 75" },
+      { title: "Lehrbuch »Drachenkraft«", type: "other", desc: "Erhöht den Nahkampfangriff um 150. Erhöht die Nahangriffsverteidigung um 75." },
+      { title: "Lehrbuch »Drachenmagie«", type: "other", desc: "Erhöht die maximalen MP um 10000." },
+      { title: "Lehrbuch »Drachenvitalität«", type: "other", desc: "Erhöht die maximalen HP um 10000." },
+
+      // Techrons Forschung
+      { title: "Techrons Muskelforschung", type: "other", desc: "Erhöht die maximalen HP um 13000." },
+      { title: "Techrons Kognitionsforschung", type: "other", desc: "Erhöht die Fernangriffskraft um 200. Erhöht die Fernangriffsverteidigung um 100. Erhöht die Hitrate um 400. Erhöht das Ausweichen um 200." },
+      { title: "Techrons Hirnforschung", type: "other", desc: "Erhöht die Magieangriffskraft um 220. Erhöht die Magieverteidigung um 110." },
+      { title: "Techrons Knochenforschung", type: "other", desc: "Erhöht den Nahkampfangriff um 200. Erhöht die Nahangriffsverteidigung um 100." },
+      { title: "Techrons Magieforschung", type: "other", desc: "Erhöht die maximalen MP um 13000." },
+
+      // Freundschaften / Handbücher
+      { title: "Feenfreundschaft (1)", type: "other", desc: "Erhöht alle Elementresistenzen um 10." },
+      { title: "Feenfreundschaft (2)", type: "other", desc: "Erhöht alle Elementresistenzen um 20." },
+
+      { title: "Handbuch des Lebens", type: "other", desc: "Erhöht die maximalen HP um 3000. Erhöht die maximalen MP um 3000." },
+      { title: "Handbuch des Kriegers", type: "other", desc: "Erhöht alle Angriffskräfte um 100. Erhöht alle Verteidigungen um 100." },
+      { title: "Handbuch des Sammlers", type: "other", desc: "Mit einer Wahrscheinlichkeit von 5% erhältst du eine zusätzliche Raidbox. Mit einer Wahrscheinlichkeit von 5% erhältst du einen zusätzlichen Raidtoken (außer Hardcore-Raidmarken)." },
+      { title: "Fruchtforschung für Fortgeschrittene", type: "other", desc: "Erhöht alle Angriffskräfte um 30. Erhöht alle Verteidigungen um 30." },
+    ];
+
+    const list=document.getElementById("list");
+    const search=document.getElementById("search");
+    const bar=document.getElementById("bar");
+    const progressText=document.getElementById("progressText");
+    const countInfo=document.getElementById("countInfo");
+    const btnAll=document.getElementById("selectAll");
+    const btnClear=document.getElementById("clearAll");
+
+    let state=JSON.parse(localStorage.getItem("booksState")||"{}"); // {index:1/0}
+
+    function iconFor(type){ return ICONS[type] || ICONS.other; }
+
+    function render(){
+      const q=search.value.trim().toLowerCase();
+      list.innerHTML="";
+      let visible=0;
+
+      BOOKS.forEach((b,i)=>{
+        const match=!q||b.title.toLowerCase().includes(q)||b.desc.toLowerCase().includes(q)||b.type.includes(q);
+        if(!match) return;
+        visible++;
+
+        const card=document.createElement("div");
+        card.className="book";
+        card.innerHTML=`
+          <img class="icon" src="${iconFor(b.type)}" alt="">
+          <div style="flex:1">
+            <h3>${b.title}</h3>
+            <div class="desc">${b.desc}</div>
+          </div>
+          <div class="right">
+            <input type="checkbox" class="check" data-idx="${i}" ${state[i]?'checked':''}/>
+          </div>`;
+        list.appendChild(card);
+      });
+
+      countInfo.textContent = visible===BOOKS.length ? `${BOOKS.length} Bücher` : `${visible}/${BOOKS.length} angezeigt`;
+      wireCheckboxes();
+      updateProgress();
+    }
+
+    function wireCheckboxes(){
+      list.querySelectorAll(".check").forEach(cb=>{
+        cb.addEventListener("change",()=>{
+          const idx=cb.getAttribute("data-idx");
+          state[idx]=cb.checked?1:0;
+          localStorage.setItem("booksState",JSON.stringify(state));
+          updateProgress();
+        });
+      });
+    }
+
+    function updateProgress(){
+      const done=Object.values(state).filter(Boolean).length;
+      const total=BOOKS.length; // sollte 52 sein
+      const pct= total ? Math.round(done/total*100) : 0;
+      bar.style.width = pct + "%";
+      progressText.textContent = `${done} / ${total} abgeschlossen (${pct}%)`;
+    }
+
+    btnAll.addEventListener("click",()=>{
+      BOOKS.forEach((_,i)=>{state[i]=1;});
+      localStorage.setItem("booksState",JSON.stringify(state));
+      render();
+    });
+
+    btnClear.addEventListener("click",()=>{
+      state={};
+      localStorage.setItem("booksState",JSON.stringify(state));
+      render();
+    });
+
+    search.addEventListener("input",render);
+
+    render();
+  </script>
+</body>
+</html>

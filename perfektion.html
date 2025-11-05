@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nostale Fanpage – Perfektion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    /* ======= Dein Header-/Footer-Layout (unverändert übernommen) ======= */
+    body{margin:0;font-family:'Segoe UI','Trebuchet MS',system-ui,-apple-system,sans-serif;color:#fff;background:url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 24px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.5);flex-wrap:wrap}
+    header .logo img{max-height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
+    nav{flex:1;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+    nav a{text-decoration:none;color:#fff;padding:8px 14px;border-radius:12px;font-weight:600;transition:.25s ease}
+    nav a:hover{background:rgba(255,255,255,.15)}
+
+    .page{width:min(1100px,92vw);margin:40px auto;display:flex;flex-direction:column;gap:16px}
+    h1{margin:0;text-shadow:0 0 12px rgba(255,215,0,.45)}
+
+    /* Badge für „Aktualisiert am …“ */
+    .stamp{margin-left:auto;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);padding:8px 12px;border-radius:999px;backdrop-filter:blur(6px);font-weight:600;opacity:.95}
+
+    /* Karten/Panel */
+    .panel{display:flex;flex-direction:column;gap:16px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:16px}
+    .panel-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+    /* Marktliste – Zeilen im gleichen Stil wie deine anderen Boxen */
+    .market{display:grid;gap:12px}
+    @media (min-width:760px){ .market{grid-template-columns:1fr 1fr} }
+    @media (min-width:1060px){ .market{grid-template-columns:1fr 1fr 1fr} }
+
+    .item{
+      display:flex;align-items:center;gap:12px;
+      background:rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:14px;padding:12px;
+      box-shadow:0 8px 18px rgba(0,0,0,.28) inset;
+    }
+    .icon{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)}
+    .icon img{width:36px;height:36px;image-rendering:pixelated;filter:drop-shadow(0 0 8px rgba(255,255,255,.2))}
+    .label{font-weight:700}
+    .price{
+      margin-left:auto;
+      background:linear-gradient(90deg,#b5ffe7,#b9f5ff);
+      color:#06353a;border:1px solid rgba(0,0,0,.18);
+      padding:8px 12px;border-radius:10px;
+      font-variant-numeric:tabular-nums;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)
+    }
+
+    /* Footer (ohne Gameforge-Logo) */
+    .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.18);margin-top:auto}
+    .footer p{margin:0 0 10px;color:#fff;font-weight:500}
+    .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
+    .footer .socials img{width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5));transition:transform .15s ease}
+    .footer .socials img:hover{transform:translateY(-1px) scale(1.05)}
+  </style>
+</head>
+<body>
+  <!-- Header (dein Stil) -->
+  <header>
+    <a href="index.html" class="logo"><img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo"></a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html" style="background:rgba(255,255,255,.15)">Perfektion</a>
+    </nav>
+  </header>
+
+  <!-- Inhalt -->
+  <main class="page">
+    <div class="panel">
+      <div class="panel-head">
+        <h1>Perfektion – Marktpreise</h1>
+        <div class="stamp" id="stamp">Aktualisiert am 02.09.2025 21:30</div>
+      </div>
+
+      <div id="market" class="market"><!-- JS rendert --></div>
+    </div>
+  </main>
+
+  <!-- Footer (dein Stil) -->
+  <footer class="footer">
+    <p>© 2025 Nostale Fan Tools • Unabhängiges Fanprojekt</p>
+    <div class="socials">
+      <a href="#" title="Discord"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
+      <a href="#" title="Instagram"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
+      <a href="#" title="X / Twitter"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></a>
+    </div>
+  </footer>
+
+  <script>
+    // Daten (Preise einfach hier ändern)
+    const DATA = [
+      { icon:"https://nosapki.com/images/icons/2601.png", name:"Kleiner Rubin der Vollendung",  price:"120k" },
+      { icon:"https://nosapki.com/images/icons/2603.png", name:"Kleiner Saphir der Vollendung", price:"120k" },
+      { icon:"https://nosapki.com/images/icons/2604.png", name:"Kleiner Topas der Vollendung",  price:"90k" },
+      { icon:"https://nosapki.com/images/icons/2602.png", name:"Kleiner Obsidian der Vollendung", price:"160k" },
+      { icon:"https://nosapki.com/images/icons/2597.png", name:"Rubin der Vollendung",          price:"140k" },
+      { icon:"https://nosapki.com/images/icons/2599.png", name:"Saphir der Vollendung",         price:"140k" },
+      { icon:"https://nosapki.com/images/icons/2598.png", name:"Obsidian der Vollendung",       price:"180k" },
+      { icon:"https://nosapki.com/images/icons/2600.png", name:"Topas der Vollendung",          price:"160k" },
+      { icon:"https://nosapki.com/images/icons/4491.png", name:"Juwel des Ork-Helden",          price:"???" },
+      { icon:"https://nosapki.com/images/icons/4865.png", name:"Uralter magischer Drachenkristall", price:"500k" },
+      { icon:"https://nosapki.com/images/icons/7134.png", name:"Reichhaltige Energiequelle",    price:"???" },
+    ];
+
+    const root = document.getElementById('market');
+    root.innerHTML = DATA.map(d => `
+      <div class="item">
+        <div class="icon"><img loading="lazy" src="${d.icon}" alt=""></div>
+        <div class="label">${d.name}</div>
+        <div class="price">${d.price}</div>
+      </div>
+    `).join('');
+    // Falls du später dynamisch stempeln willst:
+    // document.getElementById('stamp').textContent = "Aktualisiert am " + new Date().toLocaleString("de-DE");
+  </script>
+</body>
+</html>

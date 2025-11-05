@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nostale Fanpage – Tränke-Herstellung</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{--glass:rgba(0,0,0,.55);--glass2:rgba(255,255,255,.08);--line:rgba(255,255,255,.18)}
+    *{box-sizing:border-box}
+    /* Grundlayout */
+    body{margin:0;font-family:'Segoe UI','Trebuchet MS',system-ui,-apple-system,sans-serif;color:#fff;background:url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 24px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.5);flex-wrap:wrap}
+    header .logo img{max-height:60px;filter:drop-shadow(0 0 8px rgba(255,255,255,.7))}
+    nav{flex:1;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+    nav a{text-decoration:none;color:#fff;padding:8px 14px;border-radius:12px;font-weight:600;transition:.25s ease}
+    nav a:hover{background:rgba(255,255,255,.15)}
+
+    /* Seite */
+    .page{width:min(1120px,94vw);margin:40px auto;display:flex;flex-direction:column;gap:18px}
+    h1{display:flex;align-items:center;gap:10px;text-shadow:0 0 12px rgba(255,215,0,.45);margin:0}
+    h1 img{width:28px;height:28px;border-radius:8px}
+
+    .card{background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:20px}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+
+    /* Inputs */
+    input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:10px;padding:10px 12px;font-size:1rem}
+    input[type=number]{width:120px;text-align:right}
+    input[readonly]{opacity:.85;cursor:not-allowed}
+    input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type=number]{-moz-appearance:textfield}
+    .pill{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--glass2);border:1px solid rgba(255,255,255,.2)}
+    .muted{opacity:.85}
+    .danger{background:#c0392b;border:none;padding:10px 16px;border-radius:10px;color:#fff;font-weight:700;cursor:pointer}
+    .danger:hover{background:#e74c3c}
+
+    /* Select */
+    .select{position:relative;display:inline-flex;align-items:center}
+    .select select{
+      appearance:none;-webkit-appearance:none;-moz-appearance:none;
+      background:rgba(20,24,35,.95);
+      border:1px solid rgba(255,255,255,.25);
+      color:#eaf2ff;
+      padding:10px 42px 10px 14px;border-radius:12px;font-weight:600;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)
+    }
+    .select select:focus{outline:none;border-color:#7dd3fc;box-shadow:0 0 0 3px rgba(125,211,252,.25)}
+    .select::after{content:"▾";position:absolute;right:12px;color:#9cc3ff;pointer-events:none}
+    select option{background:#0f1422;color:#eaf2ff}
+    select:-ms-expand{display:none}
+
+    /* Tabelle */
+    table{width:100%;border-collapse:collapse;margin-top:14px}
+    th,td{padding:12px;text-align:center}
+    th{background:rgba(255,255,255,.12);font-weight:700}
+    td{background:rgba(255,255,255,.06)}
+    .left{text-align:left}
+    .pos{display:flex;align-items:center;gap:10px}
+    .pos img{width:26px;height:26px;border-radius:6px;box-shadow:0 0 8px rgba(255,255,255,.2)}
+
+    .totals{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px}
+    .box{flex:1;min-width:260px;padding:14px;border-radius:14px;background:var(--glass2);border:1px solid rgba(255,255,255,.2)}
+    .profitPos{color:#2ecc71;font-weight:800}
+    .profitNeg{color:#e74c3c;font-weight:800}
+
+    /* Einheitlicher Footer (ohne Gameforge) */
+    .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.18);margin-top:auto}
+    .footer p{margin:0 0 10px;color:#fff;font-weight:500}
+    .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
+    .footer .socials img{width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(255,255,255,.5));transition:transform .15s ease}
+    .footer .socials img:hover{transform:translateY(-1px) scale(1.05)}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo" aria-label="Zur Startseite">
+      <img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo">
+    </a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <section class="page">
+    <h1><img id="potionIcon" src="https://i.postimg.cc/FKjFBxLs/erholungstrank.png" alt="">Tränke-Herstellung</h1>
+
+    <div class="card">
+      <!-- Controls -->
+      <div class="row">
+        <div class="pill">
+          <strong>Trank</strong>
+          <div class="select">
+            <select id="potionSelect" aria-label="Trank auswählen">
+              <option value="erholung">Göttlicher Erholungstrank</option>
+              <option value="heil">Göttlicher Heiltrank</option>
+              <option value="mana">Göttlicher Manatrank</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pill">
+          <strong>Basis-Ausgabe</strong>
+          <input id="baseOut" type="number" value="10" readonly> <span class="muted">Stück</span>
+        </div>
+        <div class="pill">
+          <strong>Multiplikator</strong>
+          <input id="mult" type="number" min="1" value="1"> <span class="muted">× Basis</span>
+        </div>
+
+        <div class="pill">
+          <strong>Verkaufspreis / Stück</strong>
+          <input id="sellPrice" type="number" min="0" value="0"> <span>Gold</span>
+        </div>
+
+        <button id="resetBtn" class="danger">Zurücksetzen</button>
+      </div>
+
+      <!-- Tabelle -->
+      <table aria-live="polite">
+        <thead>
+          <tr>
+            <th class="left">Position</th>
+            <th>Stückzahl</th>
+            <th>Preis</th>
+            <th>Gesamt</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+
+      <!-- Summen -->
+      <div class="totals">
+        <div class="box">Herstellungskosten: <strong id="costs">0 Gold</strong></div>
+        <div class="box">Gewinn (Verkauf − Kosten): <strong id="profit">0 Gold</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
+    <div class="socials">
+      <a href="https://discord.com" target="_blank" aria-label="Discord"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
+      <a href="https://x.com" target="_blank" aria-label="X"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></a>
+    </div>
+  </footer>
+
+  <script>
+    /* Icons */
+    const ICONS = {
+      potion: {
+        erholung: "https://i.postimg.cc/FKjFBxLs/erholungstrank.png",
+        heil:     "https://i.postimg.cc/FRT4MCsm/heiltrank.png",
+        mana:     "https://i.postimg.cc/vTy0vGdZ/manatrank.png",
+      },
+      items: {
+        riesigErholung: "https://i.postimg.cc/rwVcytzQ/great-heal.png",
+        riesigHeil:     "https://i.postimg.cc/rwVcytzQ/great-heal.png",  // Platzhalter – gern ersetzen
+        riesigMana:     "https://i.postimg.cc/zBNg3vrp/potion.png",      // Platzhalter – gern ersetzen
+        flasche:        "https://i.postimg.cc/2ypX145M/bottle.png",
+        zaubertrank:    "https://i.postimg.cc/zBNg3vrp/potion.png",
+        makrele:        "https://i.postimg.cc/L6DNSdjr/mackerel.png",
+        seltenesBlatt:  "https://i.postimg.cc/PqP6K6p0/leaf.png",
+        oriharcon:      "https://i.postimg.cc/Y03ftgL1/ori.png",
+        wurm:           "https://i.postimg.cc/sXN4nL0b/worm.png",
+      }
+    };
+
+    /* Rezepte (Mengen pro Basis = 10 Stück) */
+    const RECIPES = {
+      erholung: {
+        name: "Göttlicher Erholungstrank",
+        ingredients: [
+          { key:"riesigErholung", name:"Riesiger Erholungstrank", qtyPerBase: 40 },
+          { key:"flasche",        name:"Leere Flasche",           qtyPerBase: 20, fixedPrice: 500 },
+          { key:"zaubertrank",    name:"Zaubertrank",             qtyPerBase: 20, fixedPrice: 100 },
+          { key:"wurm",           name:"Wurm",                    qtyPerBase: 3  },
+          { key:"oriharcon",      name:"Oriharcon",               qtyPerBase: 3  },
+        ]
+      },
+      heil: {
+        name: "Göttlicher Heiltrank",
+        ingredients: [
+          { key:"riesigHeil",     name:"Riesiger Heiltrank",      qtyPerBase: 30 },
+          { key:"flasche",        name:"Leere Flasche",           qtyPerBase: 20, fixedPrice: 500 },
+          { key:"zaubertrank",    name:"Zaubertrank",             qtyPerBase: 20, fixedPrice: 100 },
+          { key:"makrele",        name:"Makrele",                 qtyPerBase: 3  },
+        ]
+      },
+      mana: {
+        name: "Göttlicher Manatrank",
+        ingredients: [
+          { key:"riesigMana",     name:"Riesiger Manatrank",      qtyPerBase: 20 },
+          { key:"flasche",        name:"Leere Flasche",           qtyPerBase: 20, fixedPrice: 500 },
+          { key:"zaubertrank",    name:"Zaubertrank",             qtyPerBase: 20, fixedPrice: 100 },
+          { key:"seltenesBlatt",  name:"Seltenes Blatt",          qtyPerBase: 3  },
+        ]
+      }
+    };
+
+    /* DOM */
+    const potionSelect = document.getElementById("potionSelect");
+    const potionIcon   = document.getElementById("potionIcon");
+    const mult         = document.getElementById("mult");
+    const sellPrice    = document.getElementById("sellPrice");
+    const rowsBody     = document.getElementById("rows");
+    const costsEl      = document.getElementById("costs");
+    const profitEl     = document.getElementById("profit");
+    const resetBtn     = document.getElementById("resetBtn");
+
+    const fmt = n => (Number(n)||0).toLocaleString("de-DE")+" Gold";
+
+    function render(){
+      const key = potionSelect.value;
+      const recipe = RECIPES[key];
+      const factor = +mult.value || 1; // 10er Basis fix → Faktor = Multiplikator
+
+      potionIcon.src = ICONS.potion[key];
+      rowsBody.innerHTML = "";
+
+      recipe.ingredients.forEach(ing => {
+        const tr = document.createElement("tr");
+
+        // Name + Icon
+        const tdName = document.createElement("td");
+        tdName.className = "left";
+        tdName.innerHTML = `<div class="pos"><img src="${ICONS.items[ing.key]}" alt=""><span>${ing.name}</span></div>`;
+
+        // Menge (skaliert)
+        const qty = document.createElement("input");
+        qty.type = "number"; qty.min = "0";
+        qty.value = ing.qtyPerBase * factor;
+
+        // Preis (Fixpreise readonly)
+        const price = document.createElement("input");
+        price.type = "number"; price.min = "0";
+        if (ing.fixedPrice != null) { price.value = ing.fixedPrice; price.readOnly = true; }
+        else { price.value = 0; }
+
+        const total = document.createElement("td");
+        total.textContent = "0 Gold";
+
+        const tdQty = document.createElement("td");  tdQty.appendChild(qty);
+        const tdPrice = document.createElement("td"); tdPrice.appendChild(price);
+
+        tr.append(tdName, tdQty, tdPrice, total);
+        rowsBody.appendChild(tr);
+
+        const recalcRow = () => {
+          const q = +qty.value || 0, p = +price.value || 0;
+          total.textContent = fmt(q*p);
+          calcTotals();
+        };
+        qty.addEventListener("input", recalcRow);
+        price.addEventListener("input", recalcRow);
+        recalcRow(); // sofort rechnen
+      });
+
+      calcTotals();
+    }
+
+    function calcTotals(){
+      let sum = 0;
+      rowsBody.querySelectorAll("tr").forEach(tr=>{
+        const [qtyInput, priceInput] = tr.querySelectorAll("input[type=number]");
+        const row = (+qtyInput.value || 0) * (+priceInput.value || 0);
+        sum += row;
+        tr.lastElementChild.textContent = fmt(row);
+      });
+
+      const output = 10 * (+mult.value || 1);
+      const revenue = output * (+sellPrice.value || 0);
+      const profit = revenue - sum;
+
+      costsEl.textContent = fmt(sum);
+      profitEl.textContent = fmt(profit);
+      profitEl.className = profit >= 0 ? "profitPos" : "profitNeg";
+    }
+
+    // Events
+    potionSelect.addEventListener("change", render);
+    mult.addEventListener("input", render);
+    sellPrice.addEventListener("input", calcTotals);
+    resetBtn.addEventListener("click", ()=>{ sellPrice.value = 0; mult.value = 1; render(); });
+
+    // Init
+    render();
+  </script>
+</body>
+</html>
