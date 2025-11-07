@@ -30,7 +30,12 @@
 
     /* Vertikale Buchliste */
     .list{display:flex;flex-direction:column;gap:12px}
-    .book{display:flex;gap:12px;align-items:flex-start;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:12px}
+    .book{
+      display:flex;gap:12px;align-items:flex-start;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:12px;
+      position:relative;
+    }
     .book img.icon{width:44px;height:44px;border-radius:10px;box-shadow:0 0 8px rgba(255,255,255,.2)}
     .book h3{margin:0 0 6px 0;font-size:1.05rem}
     .desc{opacity:.85;font-size:.92rem}
@@ -43,12 +48,27 @@
       background:rgba(255,255,255,.08);
       cursor:pointer;display:inline-block;transition:.15s ease-in-out;
     }
-    .check:checked{
-      border-color:#8fd;
-      background:linear-gradient(135deg,#3aa0ff,#00d2a8);
-    }
+    .check:checked{border-color:#8fd;background:linear-gradient(135deg,#3aa0ff,#00d2a8)}
 
-    /* Einheitlicher Footer (ohne Gameforge) */
+    /* Heldenlevel-Badge (unten rechts) */
+    .hero-badge{
+      position:absolute;right:12px;bottom:8px;
+      font-size:.82rem;display:flex;align-items:center;gap:6px;
+      padding:1px 8px;border-radius:500px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.25);opacity:.95
+    }
+    .hero-badge .val{font-weight:700;color:#dff}
+    .hero-badge .edit{
+      border:none;background:rgba(0,0,0,.35);
+      color:#fff;font-weight:700;cursor:pointer;
+      border-radius:6px;padding:2px 6px;line-height:1
+    }
+    .hero-badge .edit:hover{background:rgba(0,0,0,.5)}
+    /* Edit-Buttons ausblenden, solange gesperrt */
+    body:not(.edit-unlocked) .hero-badge .edit{ display:none }
+
+    /* Footer (einheitlich) */
     .footer{text-align:center;padding:26px 16px;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.18);margin-top:auto}
     .footer p{margin:0 0 10px;color:#fff;font-weight:500}
     .footer .socials{display:flex;justify-content:center;align-items:center;gap:22px;margin:6px 0 0}
@@ -62,7 +82,8 @@
     <nav>
       <a href="heldenbuecher.html">Heldenbücher</a>
       <a href="cella-rechner.html">Cella-Rechner</a>
-      <a href="fishing-rechner.html">Lure-Produktion</a>
+      <a href="fishing-rechner.html">Lure-Rechner</a>
+      <a href="lod_times.html">LoD & LoL Zeiten</a>
       <a href="traenke-herstellung.html">Tränke-Herstellung</a>
       <a href="damage-info.html">Damage-Info</a>
       <a href="raid-info.html">Raid-Info</a>
@@ -77,6 +98,7 @@
       <input id="search" type="text" placeholder="Suchen… (z. B. PvP, Verteidigung, Memorial …)">
       <button id="selectAll" class="btn">Alle wählen</button>
       <button id="clearAll" class="btn secondary">Alle leeren</button>
+      <button id="toggleEdit" class="btn secondary" title="Heldenlevel-Bearbeitung sperren/entsperren">🔒 Bearbeiten</button>
       <span class="muted" id="countInfo"></span>
     </div>
 
@@ -89,19 +111,39 @@
   <footer class="footer">
     <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
     <div class="socials">
-      <a href="https://discord.com" target="_blank"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
-      <a href="https://instagram.com" target="_blank"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
-      <a href="https://x.com" target="_blank"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></img></a>
+      <a href="https://discord.com" target="_blank"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord" /></a>
+      <a href="https://instagram.com" target="_blank"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram" /></a>
+      <a href="https://x.com" target="_blank"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X" /></a>
     </div>
   </footer>
 
   <script>
     const ICONS={pvp:"https://i.postimg.cc/9QrPcspM/buchrot.png",def:"https://i.postimg.cc/GpTjx68N/buchgr-n.png",other:"https://i.postimg.cc/B68RDh4Q/buchgelb.png"};
 
-    // ===== Bücher mit individueller Beschreibung =====
+    /* ── Passwort-Steuerung (nur Client-seitig, Basis-Schutz) ── */
+    const ADMIN_PASSWORD = "nostale123";               // <— hier dein Passwort setzen
+    const EDIT_FLAG_KEY  = "hb_edit_unlocked_session"; // sessionStorage-Flag
+
+    function isUnlocked(){ return sessionStorage.getItem(EDIT_FLAG_KEY)==="1"; }
+    function setUnlocked(v){
+      if(v) sessionStorage.setItem(EDIT_FLAG_KEY,"1");
+      else sessionStorage.removeItem(EDIT_FLAG_KEY);
+      document.body.classList.toggle("edit-unlocked", v);
+      const btn = document.getElementById("toggleEdit");
+      if(btn) btn.textContent = v ? "🔓 Bearbeiten aktiv" : "🔒 Bearbeiten";
+    }
+
+    /* Persistenz-Keys */
+    const STORAGE_CHECK = "booksState";
+    const STORAGE_HERO  = "heroLevels_v1"; // Titel -> Level
+
+    /* Optionale Default-Level */
+    const DEFAULT_HERO_LEVELS = { };
+
+    /* Bücher (ALLE 52) */
     const BOOKS = [
       // PvP (rot)
-      { title: "[Einfach] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 1%.ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤHerolevel: " },
+      { title: "[Einfach] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 1%." },
       { title: "[Mittel] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 2%." },
       { title: "[Fortgeschritten] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 3%." },
       { title: "[Hervorragend] PvP-Schadenserhöhung", type: "pvp", desc: "Erhöht den PvP-Schaden um 5%." },
@@ -173,27 +215,37 @@
       { title: "Fruchtforschung für Fortgeschrittene", type: "other", desc: "Erhöht alle Angriffskräfte um 30. Erhöht alle Verteidigungen um 30." },
     ];
 
-    const list=document.getElementById("list");
-    const search=document.getElementById("search");
-    const bar=document.getElementById("bar");
+    /* State & Persistenz laden */
+    let stateChecks = JSON.parse(localStorage.getItem(STORAGE_CHECK) || "{}"); // {index:1/0}
+    let heroLevels  = (()=> {
+      const raw = localStorage.getItem(STORAGE_HERO);
+      if (raw) return JSON.parse(raw);
+      localStorage.setItem(STORAGE_HERO, JSON.stringify(DEFAULT_HERO_LEVELS));
+      return {...DEFAULT_HERO_LEVELS};
+    })();
+
+    const listEl=document.getElementById("list");
+    const searchEl=document.getElementById("search");
+    const barEl=document.getElementById("bar");
     const progressText=document.getElementById("progressText");
     const countInfo=document.getElementById("countInfo");
     const btnAll=document.getElementById("selectAll");
     const btnClear=document.getElementById("clearAll");
-
-    let state=JSON.parse(localStorage.getItem("booksState")||"{}"); // {index:1/0}
+    const btnToggleEdit=document.getElementById("toggleEdit");
 
     function iconFor(type){ return ICONS[type] || ICONS.other; }
 
     function render(){
-      const q=search.value.trim().toLowerCase();
-      list.innerHTML="";
+      const q=searchEl.value.trim().toLowerCase();
+      listEl.innerHTML="";
       let visible=0;
 
       BOOKS.forEach((b,i)=>{
-        const match=!q||b.title.toLowerCase().includes(q)||b.desc.toLowerCase().includes(q)||b.type.includes(q);
+        const match=!q||b.title.toLowerCase().includes(q)||b.desc.toLowerCase().includes(q)||(b.type||"").toLowerCase().includes(q);
         if(!match) return;
         visible++;
+
+        const level = (heroLevels[b.title] ?? "—");
 
         const card=document.createElement("div");
         card.className="book";
@@ -204,49 +256,89 @@
             <div class="desc">${b.desc}</div>
           </div>
           <div class="right">
-            <input type="checkbox" class="check" data-idx="${i}" ${state[i]?'checked':''}/>
-          </div>`;
-        list.appendChild(card);
+            <input type="checkbox" class="check" data-idx="${i}" ${stateChecks[i]?'checked':''}/>
+          </div>
+          <div class="hero-badge" data-title="${b.title}">
+            <span>Heldenlevel:</span>
+            <span class="val">${level}</span>
+            <button class="edit" title="Heldenlevel bearbeiten" aria-label="Heldenlevel bearbeiten">✎</button>
+          </div>
+        `;
+        listEl.appendChild(card);
       });
 
       countInfo.textContent = visible===BOOKS.length ? `${BOOKS.length} Bücher` : `${visible}/${BOOKS.length} angezeigt`;
-      wireCheckboxes();
+      wireEvents();
       updateProgress();
     }
 
-    function wireCheckboxes(){
-      list.querySelectorAll(".check").forEach(cb=>{
+    function wireEvents(){
+      // Checkboxen
+      listEl.querySelectorAll(".check").forEach(cb=>{
         cb.addEventListener("change",()=>{
           const idx=cb.getAttribute("data-idx");
-          state[idx]=cb.checked?1:0;
-          localStorage.setItem("booksState",JSON.stringify(state));
+          stateChecks[idx]=cb.checked?1:0;
+          localStorage.setItem(STORAGE_CHECK,JSON.stringify(stateChecks));
           updateProgress();
+        });
+      });
+
+      // Edit-Buttons für Heldenlevel
+      listEl.querySelectorAll(".hero-badge .edit").forEach(btn=>{
+        btn.addEventListener("click",(e)=>{
+          if(!isUnlocked()){ alert("Bearbeiten ist gesperrt. Bitte oben mit Passwort entsperren."); return; }
+          const badge = e.target.closest(".hero-badge");
+          const title = badge.getAttribute("data-title");
+          const current = heroLevels[title] ?? "";
+          const input = prompt(`Heldenlevel für:\n${title}\n\nGib z. B. „H25“, „H30+“ oder Zahl ein.\nLeer lassen für „—“.`, current);
+          if (input === null) return; // abgebrochen
+          const val = (input || "").trim();
+          if (val === "") { delete heroLevels[title]; }
+          else { heroLevels[title] = val; }
+          localStorage.setItem(STORAGE_HERO, JSON.stringify(heroLevels));
+          badge.querySelector(".val").textContent = heroLevels[title] ?? "—";
         });
       });
     }
 
     function updateProgress(){
-      const done=Object.values(state).filter(Boolean).length;
-      const total=BOOKS.length; // sollte 52 sein
+      const done=Object.values(stateChecks).filter(Boolean).length;
+      const total=BOOKS.length;
       const pct= total ? Math.round(done/total*100) : 0;
-      bar.style.width = pct + "%";
+      barEl.style.width = pct + "%";
       progressText.textContent = `${done} / ${total} abgeschlossen (${pct}%)`;
     }
 
+    // Alle wählen / leeren
     btnAll.addEventListener("click",()=>{
-      BOOKS.forEach((_,i)=>{state[i]=1;});
-      localStorage.setItem("booksState",JSON.stringify(state));
+      BOOKS.forEach((_,i)=>{ stateChecks[i]=1; });
+      localStorage.setItem(STORAGE_CHECK, JSON.stringify(stateChecks));
       render();
     });
-
     btnClear.addEventListener("click",()=>{
-      state={};
-      localStorage.setItem("booksState",JSON.stringify(state));
+      stateChecks={};
+      localStorage.setItem(STORAGE_CHECK, JSON.stringify(stateChecks));
       render();
     });
 
-    search.addEventListener("input",render);
+    // Lock/Unlock steuern
+    btnToggleEdit.addEventListener("click",()=>{
+      if(isUnlocked()){
+        setUnlocked(false);
+      }else{
+        const pw = prompt("Passwort zum Bearbeiten eingeben:");
+        if(pw===null) return;
+        if(pw===ADMIN_PASSWORD){
+          setUnlocked(true);
+        }else{
+          alert("Falsches Passwort.");
+        }
+      }
+    });
 
+    // Initialen Lock-Status setzen & Render
+    setUnlocked(isUnlocked());
+    searchEl.addEventListener("input",render);
     render();
   </script>
 </body>
