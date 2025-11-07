@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Nostale Fanpage – LoD & LoL Zeiten</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI','Trebuchet MS',sans-serif;
+      color: #fff;
+      background: url("https://i.postimg.cc/PJzGHfHB/background.png") center/cover fixed no-repeat;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 24px;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      flex-wrap: wrap;
+    }
+
+    header .logo img {
+      max-height: 60px;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.7));
+    }
+
+    nav {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: .25s ease;
+    }
+
+    nav a:hover { background: rgba(255,255,255,.15); }
+
+    .page {
+      width: min(900px, 90vw);
+      margin: 40px auto;
+      background: rgba(0,0,0,0.55);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      backdrop-filter: blur(10px);
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #ffe680;
+      text-shadow: 0 0 12px rgba(255,215,0,0.6);
+      margin-bottom: 18px;
+    }
+
+    .selectors {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    button.switch {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .25s;
+    }
+
+    button.switch:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    select {
+      background: rgba(30,30,30,0.9);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px;
+      color: #fff;
+      padding: 8px 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      appearance: none;
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+      max-height: 36px;
+    }
+
+    select:hover { background: rgba(60,60,60,0.95); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    th, td { padding: 10px; text-align: center; }
+
+    th {
+      background: rgba(255,255,255,0.15);
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    td {
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .horntime {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.9rem;
+    }
+
+    .horntime img {
+      width: 16px;
+      height: 16px;
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.6));
+    }
+
+    .footer {
+      text-align: center;
+      padding: 26px 16px;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(255,255,255,.18);
+      margin-top: auto;
+    }
+
+    .footer p { margin: 0 0 10px; color: #fff; font-weight: 500; }
+
+    .footer .socials {
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+      margin-top: 6px;
+    }
+
+    .footer .socials img {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,.5));
+      transition: transform .15s ease;
+    }
+
+    .footer .socials img:hover { transform: translateY(-1px) scale(1.05); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo"><img src="https://i.postimg.cc/ZRjbPLB9/noslogo.png" alt="Logo"></a>
+    <nav>
+      <a href="heldenbuecher.html">Heldenbücher</a>
+      <a href="cella-rechner.html">Cella-Rechner</a>
+      <a href="fishing-rechner.html">Lure-Rechner</a>
+      <a href="lod_times.html">LoD & LoL Zeiten</a>
+      <a href="traenke-herstellung.html">Tränke-Herstellung</a>
+      <a href="damage-info.html">Damage-Info</a>
+      <a href="raid-info.html">Raid-Info</a>
+      <a href="perfektion.html">Perfektion</a>
+    </nav>
+  </header>
+
+  <section class="page">
+    <h1 id="pageTitle">Land of Death</h1>
+
+    <div class="selectors">
+      <button class="switch" id="switchBtn">Wechsel zu Land of Life</button>
+      <select id="serverSelect">
+        <option selected>[EVENT] NosVersary</option>
+        <option selected>EU-Undercity</option>
+        <option selected>EU-Dragonveil</option>
+      </select>
+      <select id="gmtSelect">
+        <option>GMT−5</option>
+        <option>GMT−4</option>
+        <option>GMT−3</option>
+        <option>GMT−2</option>
+        <option>GMT−1</option>
+        <option selected>GMT+1 (NosTale)</option>
+        <option>GMT+2</option>
+        <option>GMT+3</option>
+        <option>GMT+4</option>
+        <option>GMT+5</option>
+        <option>GMT+6</option>
+        <option>GMT+7</option>
+      </select>
+    </div>
+
+    <table id="timesTable">
+      <!-- Wird dynamisch befüllt -->
+    </table>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Nostale Fanpage – Erstellt mit <span style="color:#ff4d79">❤</span></p>
+    <div class="socials">
+      <a href="https://discord.com" target="_blank"><img src="https://i.postimg.cc/660jKtQK/discord.png" alt="Discord"></a>
+      <a href="https://instagram.com" target="_blank"><img src="https://i.postimg.cc/ncRM6R92/insta.png" alt="Instagram"></a>
+      <a href="https://x.com" target="_blank"><img src="https://i.postimg.cc/3xxJ1gLG/Twitter.png" alt="X"></a>
+    </div>
+  </footer>
+
+  <script>
+    const lodData = [
+      [null, null, null, null, null, null, {start:0, end:2, mid:1}],
+      [{start:3,end:5,mid:4}, null, null, null, null, null, null],
+      [{start:6,end:8,mid:7}, null, null, null, null, null, null],
+      [null,{start:9,end:11,mid:10},null,null,null,null,null],
+      [null,null,{start:12,end:14,mid:13},null,null,null,null],
+      [null,null,{start:15,end:17,mid:16},null,{start:15,end:17,mid:16},{start:15,end:17,mid:16},null],
+      [null,null,null,null,{start:18,end:20,mid:19},null,{start:18,end:20,mid:19}],
+      [null,null,null,null,{start:21,end:23,mid:22},{start:21,end:23,mid:22},null]
+    ];
+
+    const lolData = Array.from({length:12}, (_,i)=>(
+      Array.from({length:7},()=>({start:i*2%24,end:(i*2+2)%24,mid:(i*2+1)%24}))
+    ));
+
+    const table = document.getElementById("timesTable");
+    const gmtSelect = document.getElementById("gmtSelect");
+    const switchBtn = document.getElementById("switchBtn");
+    const pageTitle = document.getElementById("pageTitle");
+
+    let currentMode = "lod";
+    const icons = {
+      lod:"https://i.postimg.cc/23BjTpW2/horntime.png",
+      lol:"https://i.postimg.cc/xkxxX41r/horntime.png"
+    };
+
+    function adjustHour(h, offset){
+      let val = (h + offset) % 24;
+      if(val < 0) val += 24;
+      return val;
+    }
+
+    function fmt(h){ return h.toString().padStart(2,'0') + ":00"; }
+
+    function renderTable(){
+      const base = currentMode === "lod" ? lodData : lolData;
+      const icon = icons[currentMode];
+      const gmtText = gmtSelect.value.match(/([+-]?\d+)/);
+      const offset = gmtText ? parseInt(gmtText[1]) - 1 : 0; // base GMT+1
+
+      let html = "<thead><tr>";
+      for(let c=1;c<=7;c++) html += `<th>Channel ${c}</th>`;
+      html += "</tr></thead><tbody>";
+
+      for(const row of base){
+        html += "<tr>";
+        for(const cell of row){
+          if(!cell){ html += "<td>-</td>"; continue; }
+          const s = adjustHour(cell.start, offset);
+          const e = adjustHour(cell.end, offset);
+          const m = adjustHour(cell.mid, offset);
+          html += `<td><div class="horntime"><span>${fmt(s)} – ${fmt(e)}</span><img src="${icon}" alt=""><span>${fmt(m)}</span></div></td>`;
+        }
+        html += "</tr>";
+      }
+      html += "</tbody>";
+      table.innerHTML = html;
+      pageTitle.textContent = currentMode === "lod" ? "Land of Death" : "Land of Life";
+      switchBtn.textContent = currentMode === "lod" ? "Wechsel zu Land of Life" : "Wechsel zu Land of Death";
+    }
+
+    gmtSelect.addEventListener("change", renderTable);
+    switchBtn.addEventListener("click", ()=>{
+      currentMode = currentMode === "lod" ? "lol" : "lod";
+      renderTable();
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>
