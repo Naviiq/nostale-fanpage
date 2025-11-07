@@ -228,13 +228,13 @@
   <script>
     const lodData = [
       [null, null, null, null, null, null, {start:0, end:2, mid:1}],
-      [{start:3,end:5,mid:4}, null, null, null, null, null, null],
-      [{start:6,end:8,mid:7}, null, null, null, null, null, null],
-      [null,{start:9,end:11,mid:10},null,null,null,null,null],
-      [null,null,{start:12,end:14,mid:13},null,null,null,null],
-      [null,null,{start:15,end:17,mid:16},null,{start:15,end:17,mid:16},{start:15,end:17,mid:16},null],
-      [null,null,null,null,{start:18,end:20,mid:19},null,{start:18,end:20,mid:19}],
-      [null,null,null,null,{start:21,end:23,mid:22},{start:21,end:23,mid:22},null]
+      [{start:3, end:5, mid:4}, null, null, null, null, null, null],
+      [{start:6, end:8, mid:7}, null, null, null, null, null, null],
+      [null, {start:9, end:11, mid:10}, null, null, null, null, null],
+      [null, null, {start:12, end:14, mid:13}, null, null, null, null],
+      [null, {start:15, end:17, mid:16}, {start:15, end:17, mid:16}, null, null, {start:15, end:17, mid:16}, null],
+      [null, null, null, {start:18, end:20, mid:19}, {start:18, end:20, mid:19}, null, {start:18, end:20, mid:19}],
+      [null, null, null, {start:21, end:23, mid:22}, {start:21, end:23, mid:22}, {start:21, end:23, mid:22}, null]
     ];
 
     const lolData = Array.from({length:12}, (_,i)=>(
